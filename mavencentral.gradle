@@ -146,7 +146,3 @@ signing {
     useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign publishing.publications
 }
-
-//signing {
-//    sign publishing.publications
-//}

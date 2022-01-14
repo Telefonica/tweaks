@@ -42,8 +42,10 @@ task clean(type: Delete) {
 }
 
 allprojects {
-
     group = 'com.telefonica.tweaks'
-    version = '1.0.0'
-
+    if (System.getProperty("SNAPSHOT_VERSION") != null) {
+        version = System.getProperty("SNAPSHOT_VERSION")+"-SNAPSHOT"
+    } else {
+        version = System.getProperty("LIBRARY_VERSION") ?: "undefined"
+    }
 }
