@@ -1,0 +1,12 @@
+syntax: glob
+
+local.properties
+.idea/*
+!.idea/codeStyles
+.DS_Store
+bin/
+gen/
+.gradle/
+build/
+*/.idea
+*.iml
