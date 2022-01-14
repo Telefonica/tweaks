@@ -1,0 +1,24 @@
+name: "Create release"
+on: 
+  release:
+      types: [published]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        
+      - name: Build library
+        with:
+          args: 'bash ./gradlew clean :library:assembleRelease'
+          
+      - name: Release library
+        env:
+          MOBILE_MAVENCENTRAL_USER: ${{ secrets.MOBILE_MAVENCENTRAL_USER }}
+          MOBILE_MAVENCENTRAL_PASSWORD: ${{ secrets.MOBILE_MAVENCENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
+          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
+        with:
+          args: "bash ./gradlew publishReleasePublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.inputs.libraryVersion }} publishNoopPublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.inputs.libraryVersion }}"
