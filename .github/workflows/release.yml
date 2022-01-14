@@ -10,8 +10,7 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Build library
-        with:
-          args: 'bash ./gradlew clean :library:assembleRelease'
+        run: 'bash ./gradlew clean :library:assembleRelease'
           
       - name: Release library
         env:
@@ -20,5 +19,4 @@ jobs:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
           ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
-        with:
-          args: "bash ./gradlew publishReleasePublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }} publishNoopPublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }}"
+        run: "bash ./gradlew publishReleasePublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }} publishNoopPublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }}"
