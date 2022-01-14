@@ -21,4 +21,4 @@ jobs:
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
           ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
         with:
-          args: "bash ./gradlew publishReleasePublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.inputs.libraryVersion }} publishNoopPublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.inputs.libraryVersion }}"
+          args: "bash ./gradlew publishReleasePublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }} publishNoopPublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }}"
