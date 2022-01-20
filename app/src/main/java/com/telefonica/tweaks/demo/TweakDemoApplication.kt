@@ -22,10 +22,13 @@ class TweakDemoApplication : Application() {
     }
 
 private fun demoTweakGraph() = tweaksGraph {
-    cover("Tweaks Demo") {
-        label("cover-key", "Current user ID:") { flowOf("1") }
+    cover("Tweaks") {
+        label("cover-key", "Current user ID:") { flowOf("80057182") }
+        label("cover-ip", "Current IP:") { flowOf("192.168.1.127") }
+        label("cover-ip-public", "Current IP (public):") { flowOf("80.68.1.92") }
+        label("cover-ip-timestamp", "Timestamp:") { timestampState }
     }
-    category("Screen 1") {
+    category("Statistics") {
         group("Group 1") {
             label(
                 key = "timestamp",
@@ -62,5 +65,8 @@ private fun demoTweakGraph() = tweaksGraph {
             )
         }
     }
+    category("API") {}
+    category("Chat") {}
+    category("Crash reporting") {}
 }
 }
