@@ -48,18 +48,6 @@ android {
     }
 }
 
-task sourceJar(type: Jar) {
-    android.libraryVariants.all { variant ->
-        if (variant.buildType.name == "debug") {
-            from android.sourceSets.enabled.java.srcDirs
-        } else if (variant.buildType.name == "noop") {
-            from android.sourceSets.noop.java.srcDirs
-        }
-        from android.sourceSets.main.java.srcDirs
-        classifier "sources"
-    }
-}
-
 dependencies {
 
     enabledImplementation 'androidx.core:core-ktx:1.7.0'
