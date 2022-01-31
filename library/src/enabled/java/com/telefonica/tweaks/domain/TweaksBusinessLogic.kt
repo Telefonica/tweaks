@@ -29,7 +29,7 @@ class TweaksBusinessLogic @Inject constructor(
                 }
             }.toMutableList()
         if (tweaksGraph.cover != null) {
-            allEntries.plus(tweaksGraph.cover.entries)
+            allEntries.addAll(tweaksGraph.cover.entries)
         }
 
         allEntries.forEach { entry ->
