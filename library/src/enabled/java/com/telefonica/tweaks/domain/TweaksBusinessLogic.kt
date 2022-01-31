@@ -22,7 +22,7 @@ class TweaksBusinessLogic @Inject constructor(
     internal fun initialize(tweaksGraph: TweaksGraph) {
         this.tweaksGraph = tweaksGraph
         val alreadyIntroducedKeys = mutableSetOf<String>()
-        var allEntries: MutableList<TweakEntry<*>> = tweaksGraph.categories
+        val allEntries: MutableList<TweakEntry<*>> = tweaksGraph.categories
             .flatMap { category ->
                 category.groups.flatMap { group ->
                     group.entries
