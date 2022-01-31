@@ -10,6 +10,6 @@ import javax.inject.Singleton
 internal val Context.tweaksDataStore: DataStore<Preferences> by preferencesDataStore(name = "debug_tweaks")
 
 @Singleton
-class TweaksDataStore @Inject constructor(
+open class TweaksDataStore @Inject constructor(
     context: Context,
 ): DataStore<Preferences> by context.tweaksDataStore
