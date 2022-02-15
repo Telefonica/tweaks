@@ -16,9 +16,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -132,6 +134,7 @@ fun ReadOnlyStringTweakEntryBody(
     tweakRowViewModel: ReadOnlyTweakEntryViewModel<String> = ReadOnlyTweakEntryViewModel()
 ) {
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val value by remember {
         tweakRowViewModel.getValue(entry)
     }.collectAsState(initial = null)
@@ -140,6 +143,12 @@ fun ReadOnlyStringTweakEntryBody(
         onClick = {
             Toast
                 .makeText(context, "${entry.key} = $value", Toast.LENGTH_LONG)
+                .show()
+        },
+        onLongClick = {
+            clipboardManager.setText(AnnotatedString(value.orEmpty()))
+            Toast
+                .makeText(context, "'$value' copied to clipboard", Toast.LENGTH_LONG)
                 .show()
         }) {
         Text(
