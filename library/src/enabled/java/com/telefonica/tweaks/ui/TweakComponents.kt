@@ -61,10 +61,12 @@ fun TweaksCategoryScreen(
     tweakCategory: TweakCategory,
     onNavigationEvent: (String) -> Unit,
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
