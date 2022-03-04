@@ -72,7 +72,6 @@ open class Tweaks {
             application: Application,
             tweaksGraph: TweaksGraph,
         ) {
-            reference = Tweaks()
             inject(application)
 
             reference.initializeGraph(tweaksGraph)
