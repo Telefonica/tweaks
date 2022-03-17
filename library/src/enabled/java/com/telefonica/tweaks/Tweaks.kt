@@ -134,6 +134,10 @@ fun NavGraphBuilder.addTweakGraph(
         navController.navigate(route)
     }
 
+    val onCustomNavigation: ((NavController) -> Unit) -> Unit = { navigation ->
+        navigation.invoke(navController)
+    }
+
     navigation(
         startDestination = TWEAK_MAIN_SCREEN,
         route = TWEAKS_NAVIGATION_ENTRYPOINT,
@@ -144,6 +148,7 @@ fun NavGraphBuilder.addTweakGraph(
                 tweaksGraph = tweaksGraph,
                 onCategoryButtonClicked = { navController.navigate(it.navigationRoute())},
                 onNavigationEvent = onNavigationEvent,
+                onCustomNavigation = onCustomNavigation
             )
         }
 
@@ -152,6 +157,7 @@ fun NavGraphBuilder.addTweakGraph(
                 TweaksCategoryScreen(
                     tweakCategory = category,
                     onNavigationEvent = onNavigationEvent,
+                    onCustomNavigation = onCustomNavigation
                 )
             }
         }

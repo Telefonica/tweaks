@@ -119,6 +119,7 @@ class TweaksBusinessLogic @Inject constructor(
         is EditableLongTweakEntry -> longPreferencesKey(entry.key) as Preferences.Key<T>
         is ButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
         is RouteButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
+        is CustomNavigationTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
     }
 
     private fun buildIsOverridenKey(entry: TweakEntry<*>): Preferences.Key<Boolean> =
