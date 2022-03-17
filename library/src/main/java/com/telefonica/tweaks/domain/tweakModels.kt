@@ -170,7 +170,7 @@ class RouteButtonTweakEntry(key: String, name: String, val route: String) :
 
 /**
  * A button, that when tapped will execute the navigation specified
- * using the NavControlled it receives as param
+ * using the NavController it receives as param
  */
 class CustomNavigationButtonTweakEntry(
     key: String,
