@@ -1,5 +1,6 @@
 package com.telefonica.tweaks.domain
 
+import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -71,6 +72,14 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
             route: String,
         ) {
             tweak(RouteButtonTweakEntry(key, name, route))
+        }
+
+        fun customNavigationButton(
+            key: String,
+            name: String,
+            navigation: (NavController) -> Unit,
+        ) {
+            tweak(CustomNavigationButtonTweakEntry(key, name, navigation))
         }
 
         fun label(
@@ -158,6 +167,16 @@ class ButtonTweakEntry(key: String, name: String, val action: () -> Unit) :
 /** A button, that when tapped navigates to a route*/
 class RouteButtonTweakEntry(key: String, name: String, val route: String) :
     TweakEntry<Unit>(key, name)
+
+/**
+ * A button, that when tapped will execute the navigation specified
+ * using the NavController it receives as param
+ */
+class CustomNavigationButtonTweakEntry(
+    key: String,
+    name: String,
+    val navigation: (NavController) -> Unit
+): TweakEntry<Unit>(key, name)
 
 /** A non editable entry */
 class ReadOnlyStringTweakEntry(key: String, name: String, override val value: Flow<String>) :

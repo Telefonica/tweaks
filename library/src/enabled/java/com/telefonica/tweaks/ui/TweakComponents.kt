@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.telefonica.tweaks.domain.*
 
 @Composable
@@ -33,6 +34,7 @@ fun TweaksScreen(
     tweaksGraph: TweaksGraph,
     onCategoryButtonClicked: (TweakCategory) -> Unit,
     onNavigationEvent: (String) -> Unit,
+    onCustomNavigation: ((NavController) -> Unit) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -44,7 +46,11 @@ fun TweaksScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         tweaksGraph.cover?.let {
-            TweakGroupBody(tweakGroup = it, onNavigationEvent = onNavigationEvent)
+            TweakGroupBody(
+                tweakGroup = it,
+                onNavigationEvent = onNavigationEvent,
+                onCustomNavigation = onCustomNavigation
+            )
         }
         tweaksGraph.categories.forEach { category ->
             Button(
@@ -60,6 +66,7 @@ fun TweaksScreen(
 fun TweaksCategoryScreen(
     tweakCategory: TweakCategory,
     onNavigationEvent: (String) -> Unit,
+    onCustomNavigation: ((NavController) -> Unit) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -73,7 +80,11 @@ fun TweaksCategoryScreen(
         Text(tweakCategory.title, style = MaterialTheme.typography.h4)
 
         tweakCategory.groups.forEach { group ->
-            TweakGroupBody(tweakGroup = group, onNavigationEvent = onNavigationEvent)
+            TweakGroupBody(
+                tweakGroup = group,
+                onNavigationEvent = onNavigationEvent,
+                onCustomNavigation = onCustomNavigation
+            )
         }
     }
 }
@@ -82,6 +93,7 @@ fun TweaksCategoryScreen(
 fun TweakGroupBody(
     tweakGroup: TweakGroup,
     onNavigationEvent: (String) -> Unit,
+    onCustomNavigation: ((NavController) -> Unit) -> Unit
 ) {
     Card(
         elevation = 3.dp
@@ -101,6 +113,7 @@ fun TweakGroupBody(
                     is ReadOnlyStringTweakEntry -> ReadOnlyStringTweakEntryBody(entry, ReadOnlyTweakEntryViewModel())
                     is ButtonTweakEntry -> TweakButton(entry)
                     is RouteButtonTweakEntry -> TweakNavigableButton(entry, onNavigationEvent)
+                    is CustomNavigationButtonTweakEntry -> TweakNavigableButton(entry, onCustomNavigation)
                 }
             }
         }
@@ -124,6 +137,19 @@ fun TweakNavigableButton(
 ) {
     Button(
         onClick = { onClick(entry.route) },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(entry.name)
+    }
+}
+
+@Composable
+fun TweakNavigableButton(
+    entry: CustomNavigationButtonTweakEntry,
+    customNavigation: ((NavController) -> Unit) -> Unit
+) {
+    Button(
+        onClick = { customNavigation(entry.navigation) },
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(entry.name)
