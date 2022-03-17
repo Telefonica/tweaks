@@ -79,7 +79,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
             name: String,
             navigation: (NavController) -> Unit,
         ) {
-            tweak(CustomNavigationTweakEntry(key, name, navigation))
+            tweak(CustomNavigationButtonTweakEntry(key, name, navigation))
         }
 
         fun label(
@@ -172,7 +172,7 @@ class RouteButtonTweakEntry(key: String, name: String, val route: String) :
  * A button, that when tapped will execute the navigation specified
  * using the NavControlled it receives as param
  */
-class CustomNavigationTweakEntry(
+class CustomNavigationButtonTweakEntry(
     key: String,
     name: String,
     val navigation: (NavController) -> Unit

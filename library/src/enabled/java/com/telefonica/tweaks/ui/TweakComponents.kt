@@ -113,7 +113,7 @@ fun TweakGroupBody(
                     is ReadOnlyStringTweakEntry -> ReadOnlyStringTweakEntryBody(entry, ReadOnlyTweakEntryViewModel())
                     is ButtonTweakEntry -> TweakButton(entry)
                     is RouteButtonTweakEntry -> TweakNavigableButton(entry, onNavigationEvent)
-                    is CustomNavigationTweakEntry -> TweakNavigableButton(entry, onCustomNavigation)
+                    is CustomNavigationButtonTweakEntry -> TweakNavigableButton(entry, onCustomNavigation)
                 }
             }
         }
@@ -145,7 +145,7 @@ fun TweakNavigableButton(
 
 @Composable
 fun TweakNavigableButton(
-    entry: CustomNavigationTweakEntry,
+    entry: CustomNavigationButtonTweakEntry,
     customNavigation: ((NavController) -> Unit) -> Unit
 ) {
     Button(
