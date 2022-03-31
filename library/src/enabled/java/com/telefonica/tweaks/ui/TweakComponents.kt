@@ -3,17 +3,40 @@ package com.telefonica.tweaks.ui
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Card
+import androidx.compose.material.Checkbox
+import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -22,7 +45,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.telefonica.tweaks.domain.*
+import com.telefonica.tweaks.domain.ButtonTweakEntry
+import com.telefonica.tweaks.domain.DropDownMenuTweakEntry
+import com.telefonica.tweaks.domain.EditableBooleanTweakEntry
+import com.telefonica.tweaks.domain.EditableIntTweakEntry
+import com.telefonica.tweaks.domain.EditableLongTweakEntry
+import com.telefonica.tweaks.domain.EditableStringTweakEntry
+import com.telefonica.tweaks.domain.ReadOnlyStringTweakEntry
+import com.telefonica.tweaks.domain.RouteButtonTweakEntry
+import com.telefonica.tweaks.domain.TweakCategory
+import com.telefonica.tweaks.domain.TweakEntry
+import com.telefonica.tweaks.domain.TweakGroup
+import com.telefonica.tweaks.domain.TweaksGraph
+import kotlin.math.max
 
 @Composable
 fun TweaksScreen(
@@ -86,11 +121,18 @@ fun TweakGroupBody(
             Divider(thickness = 2.dp)
             tweakGroup.entries.forEach { entry ->
                 when (entry) {
-                    is EditableStringTweakEntry -> EditableStringTweakEntryBody(entry, EditableTweakEntryViewModel())
-                    is EditableBooleanTweakEntry -> EditableBooleanTweakEntryBody(entry, EditableTweakEntryViewModel())
-                    is EditableIntTweakEntry -> EditableIntTweakEntryBody(entry, EditableTweakEntryViewModel())
-                    is EditableLongTweakEntry -> EditableLongTweakEntryBody(entry, EditableTweakEntryViewModel())
-                    is ReadOnlyStringTweakEntry -> ReadOnlyStringTweakEntryBody(entry, ReadOnlyTweakEntryViewModel())
+                    is EditableStringTweakEntry -> EditableStringTweakEntryBody(entry,
+                        EditableTweakEntryViewModel())
+                    is EditableBooleanTweakEntry -> EditableBooleanTweakEntryBody(entry,
+                        EditableTweakEntryViewModel())
+                    is EditableIntTweakEntry -> EditableIntTweakEntryBody(entry,
+                        EditableTweakEntryViewModel())
+                    is EditableLongTweakEntry -> EditableLongTweakEntryBody(entry,
+                        EditableTweakEntryViewModel())
+                    is DropDownMenuTweakEntry -> DropDownMenuTweakEntryBody(entry,
+                        EditableTweakEntryViewModel())
+                    is ReadOnlyStringTweakEntry -> ReadOnlyStringTweakEntryBody(entry,
+                        ReadOnlyTweakEntryViewModel())
                     is ButtonTweakEntry -> TweakButton(entry)
                     is RouteButtonTweakEntry -> TweakNavigableButton(entry, onNavigationEvent)
                 }
@@ -112,7 +154,7 @@ fun TweakButton(entry: ButtonTweakEntry) {
 @Composable
 fun TweakNavigableButton(
     entry: RouteButtonTweakEntry,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
 ) {
     Button(
         onClick = { onClick(entry.route) },
@@ -125,7 +167,7 @@ fun TweakNavigableButton(
 @Composable
 fun ReadOnlyStringTweakEntryBody(
     entry: ReadOnlyStringTweakEntry,
-    tweakRowViewModel: ReadOnlyTweakEntryViewModel<String> = ReadOnlyTweakEntryViewModel()
+    tweakRowViewModel: ReadOnlyTweakEntryViewModel<String> = ReadOnlyTweakEntryViewModel(),
 ) {
     val context = LocalContext.current
     val value by remember {
@@ -149,7 +191,7 @@ fun ReadOnlyStringTweakEntryBody(
 @Composable
 fun EditableStringTweakEntryBody(
     entry: EditableStringTweakEntry,
-    tweakRowViewModel: EditableTweakEntryViewModel<String> = EditableTweakEntryViewModel()
+    tweakRowViewModel: EditableTweakEntryViewModel<String> = EditableTweakEntryViewModel(),
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -170,7 +212,7 @@ fun EditableStringTweakEntryBody(
 @Composable
 fun EditableBooleanTweakEntryBody(
     entry: EditableBooleanTweakEntry,
-    tweakRowViewModel: EditableTweakEntryViewModel<Boolean> = EditableTweakEntryViewModel()
+    tweakRowViewModel: EditableTweakEntryViewModel<Boolean> = EditableTweakEntryViewModel(),
 ) {
     val context = LocalContext.current
     val value: Boolean? by remember {
@@ -194,7 +236,7 @@ fun EditableBooleanTweakEntryBody(
 @Composable
 fun EditableIntTweakEntryBody(
     entry: EditableIntTweakEntry,
-    tweakRowViewModel: EditableTweakEntryViewModel<Int> = EditableTweakEntryViewModel()
+    tweakRowViewModel: EditableTweakEntryViewModel<Int> = EditableTweakEntryViewModel(),
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -220,7 +262,7 @@ fun EditableIntTweakEntryBody(
 @Composable
 fun EditableLongTweakEntryBody(
     entry: EditableLongTweakEntry,
-    tweakRowViewModel: EditableTweakEntryViewModel<Long> = EditableTweakEntryViewModel()
+    tweakRowViewModel: EditableTweakEntryViewModel<Long> = EditableTweakEntryViewModel(),
 ) {
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -242,13 +284,63 @@ fun EditableLongTweakEntryBody(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@Composable
+fun DropDownMenuTweakEntryBody(
+    entry: DropDownMenuTweakEntry,
+    tweakRowViewModel: EditableTweakEntryViewModel<String> = EditableTweakEntryViewModel(),
+) {
+    val value: String? by remember {
+        tweakRowViewModel.getValue(entry)
+    }.collectAsState(initial = null)
+
+    var expanded by remember { mutableStateOf(false) }
+    val items = entry.values
+    var selectedIndex by remember {
+        mutableStateOf(max(items.indexOf(value), 0))
+    }
+
+    tweakRowViewModel.setValue(entry, items[selectedIndex])
+
+    TweakRow(
+        tweakEntry = entry,
+        onClick = {
+            expanded = true
+        },
+        onLongClick = {
+            expanded = true
+        }
+    ) {
+        Text(
+            text = "$value",
+            fontFamily = FontFamily.Monospace,
+        )
+    }
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        items.forEachIndexed { index, value ->
+            DropdownMenuItem(onClick = {
+                selectedIndex = index
+                expanded = false
+            }) {
+                Text(text = value)
+            }
+        }
+    }
+}
+
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TweakRow(
     tweakEntry: TweakEntry<*>,
     onClick: (() -> Unit),
     onLongClick: (() -> Unit)? = null,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

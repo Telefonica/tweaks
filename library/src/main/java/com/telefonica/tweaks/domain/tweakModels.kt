@@ -145,6 +145,15 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
             tweak(EditableLongTweakEntry(key, name, defaultValue))
         }
 
+        fun dropDownMenu(
+            key: String,
+            name: String,
+            values: List<String>,
+            defaultValue: Flow<String>,
+        ) {
+            tweak(DropDownMenuTweakEntry(key, name, values, defaultValue))
+        }
+
         internal fun build(): TweakGroup = TweakGroup(title, entries)
     }
 }
@@ -213,6 +222,20 @@ class EditableLongTweakEntry(
         name: String,
         defaultUniqueValue: Long,
     ) : this(key, name, flowOf(defaultUniqueValue))
+}
+
+class DropDownMenuTweakEntry(
+    key: String,
+    name: String,
+    val values: List<String>,
+    override val defaultValue: Flow<String>,
+) : TweakEntry<String>(key, name), Editable<String> {
+    constructor(
+        key: String,
+        name: String,
+        values: List<String>,
+        defaultValue: String,
+    ) : this(key, name, values, flowOf(defaultValue))
 }
 
 sealed interface Modifiable

@@ -50,6 +50,12 @@ private fun demoTweakGraph() = tweaksGraph {
                 name = "Value 4",
                 defaultValue = 42L,
             )
+            dropDownMenu(
+                key = "spinner1",
+                name = "Spinner example",
+                values = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+                defaultValue = flowOf("Monday")
+            )
             button(
                 key = "button1",
                 name = "Demo button"
