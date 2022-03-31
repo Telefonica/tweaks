@@ -3,8 +3,9 @@ package com.telefonica.tweaks.ui
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
@@ -36,15 +38,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.telefonica.tweaks.domain.ButtonTweakEntry
 import com.telefonica.tweaks.domain.DropDownMenuTweakEntry
 import com.telefonica.tweaks.domain.EditableBooleanTweakEntry
@@ -64,16 +68,23 @@ fun TweaksScreen(
     tweaksGraph: TweaksGraph,
     onCategoryButtonClicked: (TweakCategory) -> Unit,
     onNavigationEvent: (String) -> Unit,
+    onCustomNavigation: ((NavController) -> Unit) -> Unit
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         tweaksGraph.cover?.let {
-            TweakGroupBody(tweakGroup = it, onNavigationEvent = onNavigationEvent)
+            TweakGroupBody(
+                tweakGroup = it,
+                onNavigationEvent = onNavigationEvent,
+                onCustomNavigation = onCustomNavigation
+            )
         }
         tweaksGraph.categories.forEach { category ->
             Button(
@@ -89,18 +100,25 @@ fun TweaksScreen(
 fun TweaksCategoryScreen(
     tweakCategory: TweakCategory,
     onNavigationEvent: (String) -> Unit,
+    onCustomNavigation: ((NavController) -> Unit) -> Unit
 ) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(tweakCategory.title, style = MaterialTheme.typography.h4)
 
         tweakCategory.groups.forEach { group ->
-            TweakGroupBody(tweakGroup = group, onNavigationEvent = onNavigationEvent)
+            TweakGroupBody(
+                tweakGroup = group,
+                onNavigationEvent = onNavigationEvent,
+                onCustomNavigation = onCustomNavigation
+            )
         }
     }
 }
@@ -109,6 +127,7 @@ fun TweaksCategoryScreen(
 fun TweakGroupBody(
     tweakGroup: TweakGroup,
     onNavigationEvent: (String) -> Unit,
+    onCustomNavigation: ((NavController) -> Unit) -> Unit
 ) {
     Card(
         elevation = 3.dp
@@ -135,6 +154,7 @@ fun TweakGroupBody(
                         ReadOnlyTweakEntryViewModel())
                     is ButtonTweakEntry -> TweakButton(entry)
                     is RouteButtonTweakEntry -> TweakNavigableButton(entry, onNavigationEvent)
+                    is CustomNavigationButtonTweakEntry -> TweakNavigableButton(entry, onCustomNavigation)
                 }
             }
         }
@@ -165,11 +185,25 @@ fun TweakNavigableButton(
 }
 
 @Composable
+fun TweakNavigableButton(
+    entry: CustomNavigationButtonTweakEntry,
+    customNavigation: ((NavController) -> Unit) -> Unit
+) {
+    Button(
+        onClick = { customNavigation(entry.navigation) },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text(entry.name)
+    }
+}
+
+@Composable
 fun ReadOnlyStringTweakEntryBody(
     entry: ReadOnlyStringTweakEntry,
     tweakRowViewModel: ReadOnlyTweakEntryViewModel<String> = ReadOnlyTweakEntryViewModel(),
 ) {
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val value by remember {
         tweakRowViewModel.getValue(entry)
     }.collectAsState(initial = null)
@@ -178,6 +212,12 @@ fun ReadOnlyStringTweakEntryBody(
         onClick = {
             Toast
                 .makeText(context, "${entry.key} = $value", Toast.LENGTH_LONG)
+                .show()
+        },
+        onLongClick = {
+            clipboardManager.setText(AnnotatedString(value.orEmpty()))
+            Toast
+                .makeText(context, "'$value' copied to clipboard", Toast.LENGTH_LONG)
                 .show()
         }) {
         Text(

@@ -29,7 +29,7 @@ class TweaksBusinessLogic @Inject constructor(
                 }
             }.toMutableList()
         if (tweaksGraph.cover != null) {
-            allEntries.plus(tweaksGraph.cover.entries)
+            allEntries.addAll(tweaksGraph.cover.entries)
         }
 
         allEntries.forEach { entry ->
@@ -120,6 +120,7 @@ class TweaksBusinessLogic @Inject constructor(
         is DropDownMenuTweakEntry -> stringPreferencesKey(entry.key) as Preferences.Key<T>
         is ButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
         is RouteButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
+        is CustomNavigationButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
     }
 
     private fun buildIsOverridenKey(entry: TweakEntry<*>): Preferences.Key<Boolean> =

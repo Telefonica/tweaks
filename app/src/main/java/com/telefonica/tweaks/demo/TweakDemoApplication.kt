@@ -64,11 +64,17 @@ private fun demoTweakGraph() = tweaksGraph {
                 Toast.makeText(this@TweakDemoApplication, "Demo button", Toast.LENGTH_LONG)
                     .show()
             }
-
             routeButton(
                 key = "button2",
                 name = "Custom screen button",
                 route = "custom-screen"
+            )
+            customNavigationButton(
+                key = "button 3",
+                name = "Another custom screen button",
+                navigation = { navController ->
+                    navController.navigate("custom-screen")
+                }
             )
         }
     }

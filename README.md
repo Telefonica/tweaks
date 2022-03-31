@@ -133,7 +133,20 @@ fun routeButton(
 ```
 Similar, but this button navigates directly to a route of the NavHost, check [custom screens section](#custom-screens) for more info
 
-
+```kotlin
+customNavigationButton(
+    key = "button 3",
+    name = "Another custom screen button",
+    navigation = { navController ->
+        navController.navigate("custom-screen") {
+            popUpTo("another-custom-screen") {
+                inclusive = true
+            }
+        }
+    }
+)
+```
+Just like `routeButton`, but it allows to pass a lambda which receives a `NavController` so more complex navigations can be performed.
 
 ```kotlin
 fun label(
