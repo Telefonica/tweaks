@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.telefonica.tweaks.domain.ButtonTweakEntry
+import com.telefonica.tweaks.domain.CustomNavigationButtonTweakEntry
 import com.telefonica.tweaks.domain.DropDownMenuTweakEntry
 import com.telefonica.tweaks.domain.EditableBooleanTweakEntry
 import com.telefonica.tweaks.domain.EditableIntTweakEntry
