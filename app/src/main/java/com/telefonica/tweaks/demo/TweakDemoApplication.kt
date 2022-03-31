@@ -27,6 +27,12 @@ private fun demoTweakGraph() = tweaksGraph {
         label("cover-ip", "Current IP:") { flowOf("192.168.1.127") }
         label("cover-ip-public", "Current IP (public):") { flowOf("80.68.1.92") }
         label("cover-ip-timestamp", "Timestamp:") { timestampState }
+        dropDownMenu(
+            key = "spinner1",
+            name = "Spinner example",
+            values = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+            defaultValue = flowOf("Monday")
+        )
     }
     category("Statistics") {
         group("Group 1") {
@@ -50,12 +56,7 @@ private fun demoTweakGraph() = tweaksGraph {
                 name = "Value 4",
                 defaultValue = 42L,
             )
-            dropDownMenu(
-                key = "spinner1",
-                name = "Spinner example",
-                values = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
-                defaultValue = flowOf("Monday")
-            )
+
             button(
                 key = "button1",
                 name = "Demo button"
