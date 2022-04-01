@@ -224,6 +224,15 @@ fun editableLong(
 ```
 An editable Long
 
+```kotlin
+fun dropDownMenu(
+    key: String,
+    name: String,
+    values: List<String>,
+    defaultValue: Flow<String>,
+)
+```
+A DropDownMenu
 Please review the app module for configuration examples. 
 
 ## Custom screens:
