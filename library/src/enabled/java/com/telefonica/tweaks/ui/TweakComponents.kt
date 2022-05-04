@@ -366,7 +366,6 @@ fun DropDownMenuTweakEntryBody(
             DropdownMenuItem(onClick = {
                 selectedIndex = index
                 expanded = false
-                val currentValue = value
                 tweakRowViewModel.setValue(entry, items[selectedIndex])
             }) {
                 Text(text = value)
