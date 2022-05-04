@@ -4,7 +4,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +29,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,7 +69,7 @@ fun TweaksScreen(
     tweaksGraph: TweaksGraph,
     onCategoryButtonClicked: (TweakCategory) -> Unit,
     onNavigationEvent: (String) -> Unit,
-    onCustomNavigation: ((NavController) -> Unit) -> Unit
+    onCustomNavigation: ((NavController) -> Unit) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -100,7 +101,7 @@ fun TweaksScreen(
 fun TweaksCategoryScreen(
     tweakCategory: TweakCategory,
     onNavigationEvent: (String) -> Unit,
-    onCustomNavigation: ((NavController) -> Unit) -> Unit
+    onCustomNavigation: ((NavController) -> Unit) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -127,7 +128,7 @@ fun TweaksCategoryScreen(
 fun TweakGroupBody(
     tweakGroup: TweakGroup,
     onNavigationEvent: (String) -> Unit,
-    onCustomNavigation: ((NavController) -> Unit) -> Unit
+    onCustomNavigation: ((NavController) -> Unit) -> Unit,
 ) {
     Card(
         elevation = 3.dp
@@ -154,7 +155,8 @@ fun TweakGroupBody(
                         ReadOnlyTweakEntryViewModel())
                     is ButtonTweakEntry -> TweakButton(entry)
                     is RouteButtonTweakEntry -> TweakNavigableButton(entry, onNavigationEvent)
-                    is CustomNavigationButtonTweakEntry -> TweakNavigableButton(entry, onCustomNavigation)
+                    is CustomNavigationButtonTweakEntry -> TweakNavigableButton(entry,
+                        onCustomNavigation)
                 }
             }
         }
@@ -187,7 +189,7 @@ fun TweakNavigableButton(
 @Composable
 fun TweakNavigableButton(
     entry: CustomNavigationButtonTweakEntry,
-    customNavigation: ((NavController) -> Unit) -> Unit
+    customNavigation: ((NavController) -> Unit) -> Unit,
 ) {
     Button(
         onClick = { customNavigation(entry.navigation) },
@@ -340,8 +342,6 @@ fun DropDownMenuTweakEntryBody(
         mutableStateOf(max(items.indexOf(value), 0))
     }
 
-    tweakRowViewModel.setValue(entry, items[selectedIndex])
-
     TweakRow(
         tweakEntry = entry,
         onClick = {
@@ -366,6 +366,7 @@ fun DropDownMenuTweakEntryBody(
             DropdownMenuItem(onClick = {
                 selectedIndex = index
                 expanded = false
+                tweakRowViewModel.setValue(entry, items[selectedIndex])
             }) {
                 Text(text = value)
             }
