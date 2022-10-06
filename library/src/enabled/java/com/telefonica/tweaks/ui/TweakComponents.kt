@@ -29,7 +29,6 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +51,7 @@ import androidx.navigation.NavController
 import com.telefonica.tweaks.domain.ButtonTweakEntry
 import com.telefonica.tweaks.domain.CustomNavigationButtonTweakEntry
 import com.telefonica.tweaks.domain.DropDownMenuTweakEntry
+import com.telefonica.tweaks.domain.Editable
 import com.telefonica.tweaks.domain.EditableBooleanTweakEntry
 import com.telefonica.tweaks.domain.EditableIntTweakEntry
 import com.telefonica.tweaks.domain.EditableLongTweakEntry
@@ -213,7 +213,7 @@ fun ReadOnlyStringTweakEntryBody(
         tweakEntry = entry,
         onClick = {
             Toast
-                .makeText(context, "${entry.key} = $value", Toast.LENGTH_LONG)
+                .makeText(context, "${entry.name} = $value", Toast.LENGTH_LONG)
                 .show()
         },
         onLongClick = {
@@ -229,7 +229,7 @@ fun ReadOnlyStringTweakEntryBody(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditableStringTweakEntryBody(
     entry: EditableStringTweakEntry,
@@ -238,7 +238,7 @@ fun EditableStringTweakEntryBody(
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val value: String? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<String>(entry)
     }.collectAsState(initial = null)
 
     TweakRowWithEditableTextField(
@@ -258,7 +258,7 @@ fun EditableBooleanTweakEntryBody(
 ) {
     val context = LocalContext.current
     val value: Boolean? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<Boolean>(entry)
     }.collectAsState(initial = false)
 
     TweakRow(
@@ -274,7 +274,7 @@ fun EditableBooleanTweakEntryBody(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditableIntTweakEntryBody(
     entry: EditableIntTweakEntry,
@@ -283,7 +283,7 @@ fun EditableIntTweakEntryBody(
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val value: Int? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<Int>(entry)
     }.collectAsState(initial = null)
 
     TweakRowWithEditableTextField(
@@ -300,7 +300,7 @@ fun EditableIntTweakEntryBody(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditableLongTweakEntryBody(
     entry: EditableLongTweakEntry,
@@ -309,7 +309,7 @@ fun EditableLongTweakEntryBody(
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val value: Long? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<Long>(entry)
     }.collectAsState(initial = null)
 
     TweakRowWithEditableTextField(
@@ -326,14 +326,13 @@ fun EditableLongTweakEntryBody(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DropDownMenuTweakEntryBody(
     entry: DropDownMenuTweakEntry,
     tweakRowViewModel: EditableTweakEntryViewModel<String> = EditableTweakEntryViewModel(),
 ) {
     val value: String? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<String>(entry)
     }.collectAsState(initial = null)
 
     var expanded by remember { mutableStateOf(false) }
@@ -378,7 +377,7 @@ fun DropDownMenuTweakEntryBody(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TweakRow(
-    tweakEntry: TweakEntry<*>,
+    tweakEntry: TweakEntry,
     onClick: (() -> Unit),
     onLongClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
@@ -399,10 +398,10 @@ private fun TweakRow(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun <T> TweakRowWithEditableTextField(
-    entry: TweakEntry<T>,
+    entry: TweakEntry,
     context: Context,
     value: T?,
     tweakRowViewModel: EditableTweakEntryViewModel<T>,
@@ -437,7 +436,7 @@ private fun <T> TweakRowWithEditableTextField(
                 }),
             )
             IconButton(onClick = {
-                tweakRowViewModel.clearValue(entry)
+                tweakRowViewModel.clearValue(entry as Editable<T>)
                 inEditionMode = false
                 keyboardController?.hide()
             }) {
@@ -453,7 +452,7 @@ private fun <T> TweakRowWithEditableTextField(
 }
 
 @Composable
-private fun TweakNameText(entry: TweakEntry<*>) {
+private fun TweakNameText(entry: TweakEntry) {
     Text(text = entry.name, style = MaterialTheme.typography.body1)
 }
 
