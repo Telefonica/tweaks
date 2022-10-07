@@ -1,7 +1,17 @@
 package com.telefonica.tweaks.demo.theme
 
+import androidx.compose.material.darkColors
 import androidx.compose.ui.graphics.Color
 
-val Blue = Color(0xFF0066FF)
-val BlueVariant = Color(0xFF0356C9)
-val Green = Color(0xFF5CB615)
+
+val Green500 = Color(0xFF1EB980)
+val DarkBlue900 = Color(0xFF26282F)
+
+// Rally is always dark themed.
+val ColorPalette = darkColors(
+    primary = Green500,
+    surface = DarkBlue900,
+    onSurface = Color.White,
+    background = DarkBlue900,
+    onBackground = Color.White
+)
