@@ -1,6 +1,5 @@
 package com.telefonica.tweaks.ui
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -50,6 +49,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.telefonica.tweaks.domain.ButtonTweakEntry
 import com.telefonica.tweaks.domain.CustomNavigationButtonTweakEntry
@@ -87,7 +87,8 @@ fun TweaksScreen(
             TweakGroupBody(
                 tweakGroup = it,
                 onNavigationEvent = onNavigationEvent,
-                onCustomNavigation = onCustomNavigation
+                onCustomNavigation = onCustomNavigation,
+                shouldShowReset = false,
             )
         }
         tweaksGraph.categories.forEach { category ->
@@ -129,9 +130,11 @@ fun TweaksCategoryScreen(
 
 @Composable
 fun TweakGroupBody(
+    tweakGroupViewModel: TweakGroupViewModel = viewModel(),
     tweakGroup: TweakGroup,
     onNavigationEvent: (String) -> Unit,
     onCustomNavigation: ((NavController) -> Unit) -> Unit,
+    shouldShowReset: Boolean = true,
 ) {
     Card(
         elevation = 3.dp
@@ -162,7 +165,23 @@ fun TweakGroupBody(
                         onCustomNavigation)
                 }
             }
+            if (shouldShowReset) {
+                Divider(thickness = 2.dp)
+                ResetButton(onResetClicked = { tweakGroupViewModel.reset(tweakGroup) })
+            }
         }
+    }
+}
+
+@Composable
+private fun ResetButton(
+    onResetClicked: () -> Unit = {},
+) {
+    Button(
+        onClick = onResetClicked,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text("⚠️ Reset ⚠️")
     }
 }
 
@@ -432,7 +451,7 @@ private fun <T> TweakRowWithEditableTextField(
                 modifier = Modifier
                     .weight(100F, true)
                     .focusRequester(focusRequester),
-                value = "$value",
+                value = if (value == null) "" else "$value",
                 onValueChange = onTextFieldValueChanged,
                 maxLines = 1,
                 label = { Text(entry.name) },
@@ -468,7 +487,7 @@ private fun <T> TweakRowWithEditableTextField(
             shouldShowOverriddenLabel = shouldShowOverriddenLabel
         ) {
             Text(
-                text = "$value",
+                text = if (value == null) "<not defined>" else "$value",
                 fontFamily = FontFamily.Monospace,
             )
         }
@@ -483,7 +502,9 @@ private fun TweakNameText(
     Row {
         Text(text = entry.name, style = MaterialTheme.typography.body1)
         if (shouldShowOverriddenLabel) {
-            Text("(Modified)", style = MaterialTheme.typography.caption, color = MaterialTheme.colors.primaryVariant)
+            Text("(Modified)",
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.primaryVariant)
         }
     }
 }

@@ -101,7 +101,7 @@ class TweaksBusinessLogic @Inject constructor(
         tweaksDataStore.data
             .map { preferences -> preferences[buildKey(entry)] }
 
-    internal suspend fun <T> clearValue(entry: Editable<T>) {
+    internal suspend fun clearValue(entry: Editable<*>) {
         tweaksDataStore.edit {
             it.remove(buildKey(entry))
             it.remove(buildIsOverridenKey(entry))
