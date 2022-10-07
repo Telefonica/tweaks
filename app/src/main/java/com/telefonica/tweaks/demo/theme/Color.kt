@@ -10,6 +10,7 @@ val DarkBlue900 = Color(0xFF26282F)
 // Rally is always dark themed.
 val ColorPalette = darkColors(
     primary = Green500,
+    primaryVariant = Green500,
     surface = DarkBlue900,
     onSurface = Color.White,
     background = DarkBlue900,

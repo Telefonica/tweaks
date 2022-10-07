@@ -1,12 +1,17 @@
 package com.telefonica.tweaks.domain
 
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.telefonica.tweaks.data.TweaksDataStore
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,9 +41,9 @@ class TweaksBusinessLogic @Inject constructor(
         allEntries
             .filterIsInstance<Editable<*>>()
             .forEach { entry ->
-            checkIfRepeatedKey(alreadyIntroducedKeys, entry)
-            keyToEntryValueMap[entry.key] = entry
-        }
+                checkIfRepeatedKey(alreadyIntroducedKeys, entry)
+                keyToEntryValueMap[entry.key] = entry
+            }
     }
 
     private fun checkIfRepeatedKey(
@@ -64,8 +69,7 @@ class TweaksBusinessLogic @Inject constructor(
     }
 
     private fun <T> getMutableValue(entry: Editable<T>): Flow<T?> {
-        val editableCasted = entry
-        val defaultValue: Flow<T> = editableCasted.defaultValue
+        val defaultValue: Flow<T> = entry.defaultValue ?: flowOf()
 
         return isOverriden(entry)
             .flatMapMerge { overriden ->
@@ -78,6 +82,20 @@ class TweaksBusinessLogic @Inject constructor(
 
     private fun isOverriden(entry: Editable<*>): Flow<Boolean> = tweaksDataStore.data
         .map { preferences -> preferences[buildIsOverridenKey(entry)] ?: OVERRIDEN_DEFAULT_VALUE }
+
+    fun <T> isOverriddenOrDifferentFromDefaultValue(entry: Editable<T>): Flow<Boolean> {
+        val valueFlow = getValue<T>(entry.key)
+        return if (entry.defaultValue == null) {
+            isOverriden(entry)
+        } else {
+            valueFlow
+                .combine(entry.defaultValue!!) { currentValue, defaultValue ->
+                    currentValue == defaultValue
+                }.combine(isOverriden(entry)) { areEquals, isOverriden ->
+                    isOverriden && !areEquals
+                }
+        }
+    }
 
     private fun <T> getFromStorage(entry: Editable<T>) =
         tweaksDataStore.data
@@ -114,15 +132,11 @@ class TweaksBusinessLogic @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun <T> buildKey(entry: Editable<T>): Preferences.Key<T> = when (entry) {
-//        is ReadOnlyStringTweakEntry -> stringPreferencesKey(entry.key) as Preferences.Key<T>
         is EditableStringTweakEntry -> stringPreferencesKey(entry.key) as Preferences.Key<T>
         is EditableBooleanTweakEntry -> booleanPreferencesKey(entry.key) as Preferences.Key<T>
         is EditableIntTweakEntry -> intPreferencesKey(entry.key) as Preferences.Key<T>
         is EditableLongTweakEntry -> longPreferencesKey(entry.key) as Preferences.Key<T>
         is DropDownMenuTweakEntry -> stringPreferencesKey(entry.key) as Preferences.Key<T>
-//        is ButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
-//        is RouteButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
-//        is CustomNavigationButtonTweakEntry -> throw java.lang.IllegalStateException("Buttons doesn't have keys")
         else -> throw java.lang.IllegalStateException("Unknown tweak entry")
     }
 

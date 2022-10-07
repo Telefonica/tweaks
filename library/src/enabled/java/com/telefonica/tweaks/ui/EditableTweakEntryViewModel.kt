@@ -6,6 +6,7 @@ import com.telefonica.tweaks.Tweaks
 import com.telefonica.tweaks.domain.Editable
 import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweaksBusinessLogic
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,10 @@ class EditableTweakEntryViewModel<T>(
             tweaksBusinessLogic.setValue(entry, value)
         }
     }
+
+    fun isOverridden(entry: Editable<T>): Flow<Boolean> =
+        tweaksBusinessLogic.isOverriddenOrDifferentFromDefaultValue(entry)
+
 
     fun clearValue(entry: Editable<T>) {
         viewModelScope.launch {

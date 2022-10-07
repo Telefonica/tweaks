@@ -90,7 +90,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry>) {
         fun editableString(
             key: String,
             name: String,
-            defaultValue: Flow<String> = flowOf(),
+            defaultValue: Flow<String>? = null,
         ) {
             tweak(EditableStringTweakEntry(key, name, defaultValue))
         }
@@ -106,7 +106,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry>) {
         fun editableBoolean(
             key: String,
             name: String,
-            defaultValue: Flow<Boolean> = flowOf(),
+            defaultValue: Flow<Boolean>? = null,
         ) {
             tweak(EditableBooleanTweakEntry(key, name, defaultValue))
         }
@@ -122,7 +122,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry>) {
         fun editableInt(
             key: String,
             name: String,
-            defaultValue: Flow<Int> = flowOf(),
+            defaultValue: Flow<Int>? = null,
         ) {
             tweak(EditableIntTweakEntry(key, name, defaultValue))
         }
@@ -138,7 +138,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry>) {
         fun editableLong(
             key: String,
             name: String,
-            defaultValue: Flow<Long> = flowOf(),
+            defaultValue: Flow<Long>? = null,
         ) {
             tweak(EditableLongTweakEntry(key, name, defaultValue))
         }
@@ -171,7 +171,7 @@ sealed class TweakEntry(
 sealed interface Modifiable
 interface Editable<T> : Modifiable {
     val key: String
-    val defaultValue: Flow<T>
+    val defaultValue: Flow<T>?
 }
 interface ReadOnly<T> : Modifiable {
     val value: Flow<T>
@@ -204,7 +204,7 @@ class ReadOnlyStringTweakEntry(
 class EditableStringTweakEntry(
     override val key: String,
     name: String,
-    override val defaultValue: Flow<String> = flowOf(),
+    override val defaultValue: Flow<String>? = null,
 ) : TweakEntry(name = name), Editable<String> {
     constructor(
         key: String,
@@ -217,7 +217,7 @@ class EditableStringTweakEntry(
 class EditableBooleanTweakEntry(
     override val key: String,
     name: String,
-    override val defaultValue: Flow<Boolean> = flowOf(),
+    override val defaultValue: Flow<Boolean>? = null,
 ) : TweakEntry(name = name), Editable<Boolean> {
     constructor(
         key: String,
@@ -230,7 +230,7 @@ class EditableBooleanTweakEntry(
 class EditableIntTweakEntry(
     override val key: String,
     name: String,
-    override val defaultValue: Flow<Int> = flowOf(),
+    override val defaultValue: Flow<Int>? = null,
 ) : TweakEntry(name), Editable<Int> {
     constructor(
         key: String,
@@ -243,7 +243,7 @@ class EditableIntTweakEntry(
 class EditableLongTweakEntry(
     override val key: String,
     name: String,
-    override val defaultValue: Flow<Long> = flowOf(),
+    override val defaultValue: Flow<Long>? = null,
 ) : TweakEntry(name = name), Editable<Long> {
     constructor(
         key: String,
