@@ -24,7 +24,7 @@ class TweaksBusinessLogicTest {
 
     private fun givenATweaksGraphThatHasACover(): TweaksGraph = tweaksGraph {
         cover(COVER_TITLE) {
-            label(A_COVER_ENTRY_KEY, A_COVER_ENTRY_NAME) { flowOf(A_COVER_ENTRY_VALUE) }
+            label(A_COVER_ENTRY_NAME) { flowOf(A_COVER_ENTRY_VALUE) }
         }
     }
 

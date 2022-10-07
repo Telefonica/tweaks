@@ -10,6 +10,7 @@ import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +30,8 @@ import com.telefonica.tweaks.domain.TweaksBusinessLogic
 import com.telefonica.tweaks.domain.TweaksGraph
 import com.telefonica.tweaks.ui.TweaksCategoryScreen
 import com.telefonica.tweaks.ui.TweaksScreen
+import com.telefonica.tweaks.ui.theme.TweaksColorPalette
+import com.telefonica.tweaks.ui.theme.TweaksTypography
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -107,7 +110,9 @@ private fun vibrateIfAble(context: Context) {
 }
 
 fun NavGraphBuilder.addTweakGraph(
-    tweaksCustomTheme: @Composable (block: @Composable () -> Unit) -> Unit = { it() },
+    tweaksCustomTheme: @Composable (block: @Composable () -> Unit) -> Unit = {
+        MaterialTheme(colors = TweaksColorPalette, typography = TweaksTypography, content = it)
+    },
     navController: NavController,
     customComposableScreens: NavGraphBuilder.() -> Unit = {},
 ) {
