@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.telefonica.tweaks.ui.theme.DebugTweaksTheme
 import com.telefonica.tweaks.addTweakGraph
+import com.telefonica.tweaks.demo.theme.DebugTweaksTheme
 import com.telefonica.tweaks.navigateToTweaksOnShake
 
 class MainActivity : ComponentActivity() {
@@ -74,18 +75,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    DebugTweaksTheme {
-        Greeting("Android")
     }
 }
