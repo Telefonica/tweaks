@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.telefonica.tweaks.demo.theme.DebugTweaksTheme
 import com.telefonica.tweaks.addTweakGraph
+import com.telefonica.tweaks.demo.theme.DebugTweaksTheme2
 import com.telefonica.tweaks.navigateToTweaksOnShake
 
 class MainActivity : ComponentActivity() {

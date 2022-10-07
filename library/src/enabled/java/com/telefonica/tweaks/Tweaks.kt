@@ -107,6 +107,7 @@ private fun vibrateIfAble(context: Context) {
 }
 
 fun NavGraphBuilder.addTweakGraph(
+    tweaksCustomTheme: @Composable (block: @Composable () -> Unit) -> Unit = { it() },
     navController: NavController,
     customComposableScreens: NavGraphBuilder.() -> Unit = {},
 ) {
@@ -126,21 +127,25 @@ fun NavGraphBuilder.addTweakGraph(
     ) {
 
         composable(TWEAK_MAIN_SCREEN) {
-            TweaksScreen(
-                tweaksGraph = tweaksGraph,
-                onCategoryButtonClicked = { navController.navigate(it.navigationRoute()) },
-                onNavigationEvent = onNavigationEvent,
-                onCustomNavigation = onCustomNavigation
-            )
+            tweaksCustomTheme {
+                TweaksScreen(
+                    tweaksGraph = tweaksGraph,
+                    onCategoryButtonClicked = { navController.navigate(it.navigationRoute()) },
+                    onNavigationEvent = onNavigationEvent,
+                    onCustomNavigation = onCustomNavigation
+                )
+            }
         }
 
         tweaksGraph.categories.forEach { category ->
             composable(category.navigationRoute()) {
-                TweaksCategoryScreen(
-                    tweakCategory = category,
-                    onNavigationEvent = onNavigationEvent,
-                    onCustomNavigation = onCustomNavigation
-                )
+                tweaksCustomTheme {
+                    TweaksCategoryScreen(
+                        tweakCategory = category,
+                        onNavigationEvent = onNavigationEvent,
+                        onCustomNavigation = onCustomNavigation
+                    )
+                }
             }
         }
         customComposableScreens()

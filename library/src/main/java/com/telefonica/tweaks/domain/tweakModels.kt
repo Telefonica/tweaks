@@ -16,8 +16,8 @@ data class TweaksGraph(val cover: TweakGroup?, val categories: List<TweakCategor
         private val categories = mutableListOf<TweakCategory>()
         private var cover: TweakGroup? = null
 
-        fun cover(title: String, block: TweakGroup.Builder.() -> Unit) {
-            val builder = TweakGroup.Builder(title)
+        fun cover(title: String, withClearButton: Boolean = false, block: TweakGroup.Builder.() -> Unit) {
+            val builder = TweakGroup.Builder(title, withClearButton)
             builder.block()
             cover = builder.build()
         }
@@ -39,8 +39,12 @@ data class TweakCategory(val title: String, val groups: List<TweakGroup>) {
     class Builder(private val title: String) {
         private val groups = mutableListOf<TweakGroup>()
 
-        fun group(title: String, block: TweakGroup.Builder.() -> Unit) {
-            val builder = TweakGroup.Builder(title)
+        fun group(
+            title: String,
+            withClearButton: Boolean = true,
+            block: TweakGroup.Builder.() -> Unit,
+        ) {
+            val builder = TweakGroup.Builder(title, withClearButton)
             builder.block()
             groups.add(builder.build())
         }
@@ -50,8 +54,11 @@ data class TweakCategory(val title: String, val groups: List<TweakGroup>) {
 }
 
 /** A bunch of tweaks that are related to each other, for example: domain & port for the backend server configurations*/
-data class TweakGroup(val title: String, val entries: List<TweakEntry>) {
-    class Builder(private val title: String) {
+data class TweakGroup(val title: String, val withClearButton: Boolean = true, val entries: List<TweakEntry>) {
+    class Builder(
+        private val title: String,
+        private val withClearButton: Boolean = true,
+    ) {
         private val entries = mutableListOf<TweakEntry>()
 
         fun tweak(entry: TweakEntry) {
@@ -59,7 +66,6 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry>) {
         }
 
         fun button(
-            key: String,
             name: String,
             action: () -> Unit,
         ) {
@@ -160,19 +166,20 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry>) {
             tweak(DropDownMenuTweakEntry(key, name, values, defaultValue))
         }
 
-        internal fun build(): TweakGroup = TweakGroup(title, entries)
+        internal fun build(): TweakGroup = TweakGroup(title, withClearButton, entries)
     }
 }
 
 sealed class TweakEntry(
     val name: String,
-): Modifiable
+) : Modifiable
 
 sealed interface Modifiable
 interface Editable<T> : Modifiable {
     val key: String
     val defaultValue: Flow<T>?
 }
+
 interface ReadOnly<T> : Modifiable {
     val value: Flow<T>
 }

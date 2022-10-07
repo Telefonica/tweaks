@@ -57,7 +57,6 @@ private fun demoTweakGraph() = tweaksGraph {
             )
 
             button(
-                key = "button1",
                 name = "Demo button"
             ) {
                 Toast.makeText(this@TweakDemoApplication, "Demo button", Toast.LENGTH_LONG)

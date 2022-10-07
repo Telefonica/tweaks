@@ -88,7 +88,6 @@ fun TweaksScreen(
                 tweakGroup = it,
                 onNavigationEvent = onNavigationEvent,
                 onCustomNavigation = onCustomNavigation,
-                shouldShowReset = false,
             )
         }
         tweaksGraph.categories.forEach { category ->
@@ -134,7 +133,6 @@ fun TweakGroupBody(
     tweakGroup: TweakGroup,
     onNavigationEvent: (String) -> Unit,
     onCustomNavigation: ((NavController) -> Unit) -> Unit,
-    shouldShowReset: Boolean = true,
 ) {
     Card(
         elevation = 3.dp
@@ -165,7 +163,7 @@ fun TweakGroupBody(
                         onCustomNavigation)
                 }
             }
-            if (shouldShowReset) {
+            if (tweakGroup.withClearButton) {
                 Divider(thickness = 2.dp)
                 ResetButton(onResetClicked = { tweakGroupViewModel.reset(tweakGroup) })
             }
