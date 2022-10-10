@@ -1,6 +1,5 @@
 package com.telefonica.tweaks.ui
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -38,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -48,10 +49,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.telefonica.tweaks.domain.ButtonTweakEntry
 import com.telefonica.tweaks.domain.CustomNavigationButtonTweakEntry
 import com.telefonica.tweaks.domain.DropDownMenuTweakEntry
+import com.telefonica.tweaks.domain.Editable
 import com.telefonica.tweaks.domain.EditableBooleanTweakEntry
 import com.telefonica.tweaks.domain.EditableIntTweakEntry
 import com.telefonica.tweaks.domain.EditableLongTweakEntry
@@ -84,7 +87,7 @@ fun TweaksScreen(
             TweakGroupBody(
                 tweakGroup = it,
                 onNavigationEvent = onNavigationEvent,
-                onCustomNavigation = onCustomNavigation
+                onCustomNavigation = onCustomNavigation,
             )
         }
         tweaksGraph.categories.forEach { category ->
@@ -126,6 +129,7 @@ fun TweaksCategoryScreen(
 
 @Composable
 fun TweakGroupBody(
+    tweakGroupViewModel: TweakGroupViewModel = viewModel(),
     tweakGroup: TweakGroup,
     onNavigationEvent: (String) -> Unit,
     onCustomNavigation: ((NavController) -> Unit) -> Unit,
@@ -159,7 +163,23 @@ fun TweakGroupBody(
                         onCustomNavigation)
                 }
             }
+            if (tweakGroup.withClearButton) {
+                Divider(thickness = 2.dp)
+                ResetButton(onResetClicked = { tweakGroupViewModel.reset(tweakGroup) })
+            }
         }
+    }
+}
+
+@Composable
+private fun ResetButton(
+    onResetClicked: () -> Unit = {},
+) {
+    Button(
+        onClick = onResetClicked,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text("⚠️ Reset ⚠️")
     }
 }
 
@@ -213,7 +233,7 @@ fun ReadOnlyStringTweakEntryBody(
         tweakEntry = entry,
         onClick = {
             Toast
-                .makeText(context, "${entry.key} = $value", Toast.LENGTH_LONG)
+                .makeText(context, "${entry.name} = $value", Toast.LENGTH_LONG)
                 .show()
         },
         onLongClick = {
@@ -229,25 +249,26 @@ fun ReadOnlyStringTweakEntryBody(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditableStringTweakEntryBody(
     entry: EditableStringTweakEntry,
     tweakRowViewModel: EditableTweakEntryViewModel<String> = EditableTweakEntryViewModel(),
 ) {
-    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val value: String? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<String>(entry)
     }.collectAsState(initial = null)
 
+    val isOverridden by remember { tweakRowViewModel.isOverridden(entry) }.collectAsState(initial = false)
+
     TweakRowWithEditableTextField(
-        entry,
-        context,
-        value,
-        tweakRowViewModel,
-        keyboardController,
-        onTextFieldValueChanged = { tweakRowViewModel.setValue(entry, it) }
+        entry = entry,
+        value = value,
+        tweakRowViewModel = tweakRowViewModel,
+        keyboardController = keyboardController,
+        onTextFieldValueChanged = { tweakRowViewModel.setValue(entry, it) },
+        shouldShowOverriddenLabel = isOverridden
     )
 }
 
@@ -258,8 +279,10 @@ fun EditableBooleanTweakEntryBody(
 ) {
     val context = LocalContext.current
     val value: Boolean? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<Boolean>(entry)
     }.collectAsState(initial = false)
+
+    val isOverridden by remember { tweakRowViewModel.isOverridden(entry) }.collectAsState(initial = false)
 
     TweakRow(
         tweakEntry = entry,
@@ -267,73 +290,75 @@ fun EditableBooleanTweakEntryBody(
             Toast
                 .makeText(context, "Current value is $entry.", Toast.LENGTH_LONG)
                 .show()
-        }) {
+        },
+        shouldShowOverriddenLabel = isOverridden) {
         Checkbox(checked = value ?: false, onCheckedChange = {
             tweakRowViewModel.setValue(entry, it)
         })
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditableIntTweakEntryBody(
     entry: EditableIntTweakEntry,
     tweakRowViewModel: EditableTweakEntryViewModel<Int> = EditableTweakEntryViewModel(),
 ) {
-    val context = LocalContext.current
+    val isOverridden by remember { tweakRowViewModel.isOverridden(entry) }.collectAsState(initial = false)
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val value: Int? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<Int>(entry)
     }.collectAsState(initial = null)
 
     TweakRowWithEditableTextField(
-        entry,
-        context,
-        value,
-        tweakRowViewModel,
-        keyboardController,
+        entry = entry,
+        value = value,
+        tweakRowViewModel = tweakRowViewModel,
+        keyboardController = keyboardController,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         onTextFieldValueChanged = {
             val newValue = it.toIntOrNull() ?: 0
             tweakRowViewModel.setValue(entry, newValue)
-        }
+        },
+        shouldShowOverriddenLabel = isOverridden,
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditableLongTweakEntryBody(
     entry: EditableLongTweakEntry,
     tweakRowViewModel: EditableTweakEntryViewModel<Long> = EditableTweakEntryViewModel(),
 ) {
-    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val value: Long? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<Long>(entry)
     }.collectAsState(initial = null)
 
+    val isOverridden by remember { tweakRowViewModel.isOverridden(entry) }.collectAsState(initial = false)
+
     TweakRowWithEditableTextField(
-        entry,
-        context,
-        value,
-        tweakRowViewModel,
-        keyboardController,
+        entry = entry,
+        value = value,
+        tweakRowViewModel = tweakRowViewModel,
+        keyboardController = keyboardController,
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         onTextFieldValueChanged = {
             val newValue = it.toLongOrNull() ?: 0
             tweakRowViewModel.setValue(entry, newValue)
-        }
+        },
+        shouldShowOverriddenLabel = isOverridden,
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DropDownMenuTweakEntryBody(
     entry: DropDownMenuTweakEntry,
     tweakRowViewModel: EditableTweakEntryViewModel<String> = EditableTweakEntryViewModel(),
 ) {
     val value: String? by remember {
-        tweakRowViewModel.getValue(entry)
+        tweakRowViewModel.getValue<String>(entry)
     }.collectAsState(initial = null)
 
     var expanded by remember { mutableStateOf(false) }
@@ -342,6 +367,8 @@ fun DropDownMenuTweakEntryBody(
         mutableStateOf(max(items.indexOf(value), 0))
     }
 
+    val isOverridden by remember { tweakRowViewModel.isOverridden(entry) }.collectAsState(initial = false)
+
     TweakRow(
         tweakEntry = entry,
         onClick = {
@@ -349,7 +376,8 @@ fun DropDownMenuTweakEntryBody(
         },
         onLongClick = {
             expanded = true
-        }
+        },
+        shouldShowOverriddenLabel = isOverridden,
     ) {
         Text(
             text = "$value",
@@ -378,9 +406,10 @@ fun DropDownMenuTweakEntryBody(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TweakRow(
-    tweakEntry: TweakEntry<*>,
+    tweakEntry: TweakEntry,
     onClick: (() -> Unit),
     onLongClick: (() -> Unit)? = null,
+    shouldShowOverriddenLabel: Boolean = false,
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
@@ -394,42 +423,36 @@ private fun TweakRow(
                 onLongClick = onLongClick
             )
     ) {
-        TweakNameText(entry = tweakEntry)
+        TweakNameText(entry = tweakEntry, shouldShowOverriddenLabel = shouldShowOverriddenLabel)
         content()
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun <T> TweakRowWithEditableTextField(
-    entry: TweakEntry<T>,
-    context: Context,
+    entry: TweakEntry,
     value: T?,
     tweakRowViewModel: EditableTweakEntryViewModel<T>,
     keyboardController: SoftwareKeyboardController?,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onTextFieldValueChanged: (String) -> Unit,
+    shouldShowOverriddenLabel: Boolean = false,
 ) {
-
+    val context = LocalContext.current
     var inEditionMode by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
-    TweakRow(
-        tweakEntry = entry,
-        onClick = {
-            Toast
-                .makeText(context, "Current value is $value", Toast.LENGTH_LONG)
-                .show()
-        },
-        onLongClick = {
-            inEditionMode = true
-        }) {
-
-        if (inEditionMode) {
+    if (inEditionMode) {
+        Row {
             TextField(
-                modifier = Modifier.weight(100F, true),
-                value = "$value",
+                modifier = Modifier
+                    .weight(100F, true)
+                    .focusRequester(focusRequester),
+                value = if (value == null) "" else "$value",
                 onValueChange = onTextFieldValueChanged,
                 maxLines = 1,
+                label = { Text(entry.name) },
                 keyboardOptions = keyboardOptions.copy(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
                     inEditionMode = false
@@ -437,15 +460,32 @@ private fun <T> TweakRowWithEditableTextField(
                 }),
             )
             IconButton(onClick = {
-                tweakRowViewModel.clearValue(entry)
+                tweakRowViewModel.clearValue(entry as Editable<T>)
                 inEditionMode = false
                 keyboardController?.hide()
             }) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
             }
-        } else {
+        }
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+    } else {
+        TweakRow(
+            tweakEntry = entry,
+            onClick = {
+                Toast
+                    .makeText(context, "Current value is $value", Toast.LENGTH_LONG)
+                    .show()
+            },
+            onLongClick = {
+                inEditionMode = true
+            },
+            shouldShowOverriddenLabel = shouldShowOverriddenLabel
+        ) {
             Text(
-                text = "$value",
+                text = if (value == null) "<not defined>" else "$value",
                 fontFamily = FontFamily.Monospace,
             )
         }
@@ -453,8 +493,18 @@ private fun <T> TweakRowWithEditableTextField(
 }
 
 @Composable
-private fun TweakNameText(entry: TweakEntry<*>) {
-    Text(text = entry.name, style = MaterialTheme.typography.body1)
+private fun TweakNameText(
+    entry: TweakEntry,
+    shouldShowOverriddenLabel: Boolean = false,
+) {
+    Row {
+        Text(text = entry.name, style = MaterialTheme.typography.body1)
+        if (shouldShowOverriddenLabel) {
+            Text("(Modified)",
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.primaryVariant)
+        }
+    }
 }
 
 @Preview

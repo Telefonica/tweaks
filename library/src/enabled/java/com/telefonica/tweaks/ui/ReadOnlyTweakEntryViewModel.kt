@@ -10,5 +10,5 @@ class ReadOnlyTweakEntryViewModel<T>(
     private val tweaksBusinessLogic: TweaksBusinessLogic = Tweaks.getReference().tweaksBusinessLogic
 ) : ViewModel() {
 
-    fun getValue(entry: TweakEntry<T>): Flow<T?> = tweaksBusinessLogic.getValue(entry)
+    fun getValue(entry: TweakEntry): Flow<T?> = tweaksBusinessLogic.getValue(entry)
 }

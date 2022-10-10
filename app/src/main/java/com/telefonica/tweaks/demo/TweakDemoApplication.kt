@@ -23,10 +23,10 @@ class TweakDemoApplication : Application() {
 
 private fun demoTweakGraph() = tweaksGraph {
     cover("Tweaks") {
-        label("cover-key", "Current user ID:") { flowOf("80057182") }
-        label("cover-ip", "Current IP:") { flowOf("192.168.1.127") }
-        label("cover-ip-public", "Current IP (public):") { flowOf("80.68.1.92") }
-        label("cover-ip-timestamp", "Timestamp:") { timestampState }
+        label("Current user ID:") { flowOf("80057182") }
+        label("Current IP:") { flowOf("192.168.1.127") }
+        label("Current IP (public):") { flowOf("80.68.1.92") }
+        label("Timestamp:") { timestampState }
         dropDownMenu(
             key = "spinner1",
             name = "Spinner example",
@@ -37,7 +37,6 @@ private fun demoTweakGraph() = tweaksGraph {
     category("Statistics") {
         group("Group 1") {
             label(
-                key = "timestamp",
                 name = "Current timestamp",
             ) {
                 timestampState
@@ -58,19 +57,16 @@ private fun demoTweakGraph() = tweaksGraph {
             )
 
             button(
-                key = "button1",
                 name = "Demo button"
             ) {
                 Toast.makeText(this@TweakDemoApplication, "Demo button", Toast.LENGTH_LONG)
                     .show()
             }
             routeButton(
-                key = "button2",
                 name = "Custom screen button",
                 route = "custom-screen"
             )
             customNavigationButton(
-                key = "button 3",
                 name = "Another custom screen button",
                 navigation = { navController ->
                     navController.navigate("custom-screen")

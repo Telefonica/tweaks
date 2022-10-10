@@ -14,7 +14,7 @@ A customizable debug screen to view and edit flags that can be used for developm
 
 
 <p align="center">
-<img src="https://user-images.githubusercontent.com/4595241/138683112-93a58d0f-1365-4392-add1-a547f4308f22.gif" data-canonical-src="https://user-images.githubusercontent.com/4595241/138683112-93a58d0f-1365-4392-add1-a547f4308f22.gif" width="200" />
+<img src="https://user-images.githubusercontent.com/4595241/194544208-8ce6cbdf-0e09-4f32-8823-b47fce7075a0.gif" data-canonical-src="https://user-images.githubusercontent.com/4595241/194544208-8ce6cbdf-0e09-4f32-8823-b47fce7075a0.gif" width="200" />
 </p>
 
 
@@ -41,13 +41,21 @@ override fun onCreate() {
 where `demoTweakGraph` is the structure you want to be rendered:
 ```kotlin
 private fun demoTweakGraph() = tweaksGraph {
-    cover("Tweaks Demo") {
-        label("cover-key", "Current user ID:") { flowOf("1") }
+    cover("Tweaks") {
+        label("Current user ID:") { flowOf("80057182") }
+        label("Current IP:") { flowOf("192.168.1.127") }
+        label("Current IP (public):") { flowOf("80.68.1.92") }
+        label("Timestamp:") { timestampState }
+        dropDownMenu(
+            key = "spinner1",
+            name = "Spinner example",
+            values = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+            defaultValue = flowOf("Monday")
+        )
     }
-    category("Screen 1") {
+    category("Statistics") {
         group("Group 1") {
             label(
-                key = "timestamp",
                 name = "Current timestamp",
             ) {
                 timestampState
@@ -66,18 +74,22 @@ private fun demoTweakGraph() = tweaksGraph {
                 name = "Value 4",
                 defaultValue = 42L,
             )
+
             button(
-                key = "button1",
                 name = "Demo button"
             ) {
                 Toast.makeText(this@TweakDemoApplication, "Demo button", Toast.LENGTH_LONG)
                     .show()
             }
-
             routeButton(
-                key = "button2",
                 name = "Custom screen button",
                 route = "custom-screen"
+            )
+            customNavigationButton(
+                name = "Another custom screen button",
+                navigation = { navController ->
+                    navController.navigate("custom-screen")
+                }
             )
         }
     }
@@ -117,7 +129,6 @@ And finally, the tweaks are the configurable elements. Currently we support thes
 
 ```kotlin
 button(
-    key: String,
     name: String,
     action: () -> Unit
 )
@@ -126,7 +137,6 @@ Used to display a button that performs an action
 
 ```kotlin
 fun routeButton(
-    key: String,
     name: String,
     route: String,
 )
@@ -135,7 +145,6 @@ Similar, but this button navigates directly to a route of the NavHost, check [cu
 
 ```kotlin
 customNavigationButton(
-    key = "button 3",
     name = "Another custom screen button",
     navigation = { navController ->
         navController.navigate("custom-screen") {
@@ -150,7 +159,6 @@ Just like `routeButton`, but it allows to pass a lambda which receives a `NavCon
 
 ```kotlin
 fun label(
-    key: String,
     name: String,
     value: () -> Flow<String>,
 )

@@ -10,6 +10,7 @@ import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
@@ -18,18 +19,19 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.squareup.seismic.ShakeDetector
 import com.telefonica.tweaks.Tweaks.Companion.TWEAKS_NAVIGATION_ENTRYPOINT
 import com.telefonica.tweaks.di.DaggerTweaksComponent
 import com.telefonica.tweaks.di.TweaksComponent
 import com.telefonica.tweaks.di.TweaksModule
 import com.telefonica.tweaks.domain.Constants.TWEAK_MAIN_SCREEN
 import com.telefonica.tweaks.domain.TweakCategory
-import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweaksBusinessLogic
 import com.telefonica.tweaks.domain.TweaksGraph
 import com.telefonica.tweaks.ui.TweaksCategoryScreen
 import com.telefonica.tweaks.ui.TweaksScreen
-import com.squareup.seismic.ShakeDetector
+import com.telefonica.tweaks.ui.theme.TweaksColorPalette
+import com.telefonica.tweaks.ui.theme.TweaksTypography
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -39,25 +41,7 @@ open class Tweaks {
     @Inject
     internal lateinit var tweaksBusinessLogic: TweaksBusinessLogic
 
-    open fun <T>getTweakValue(key: String): Flow<T?> = tweaksBusinessLogic.getValue(key)
-
-    open fun <T> getTweakValue(entry: TweakEntry<T>): Flow<T?> = tweaksBusinessLogic.getValue(entry)
-
-    open suspend fun <T> setTweakValue(key: String, value: T?) {
-        tweaksBusinessLogic.setValue(key, value)
-    }
-
-    open suspend fun <T> setTweakValue(entry: TweakEntry<T>, value: T?) {
-        tweaksBusinessLogic.setValue(entry, value)
-    }
-
-    open suspend fun <T> clearValue(entry: TweakEntry<T>) {
-        tweaksBusinessLogic.clearValue(entry)
-    }
-
-    open suspend fun <T> clearValue(key: String) {
-        tweaksBusinessLogic.clearValue<T>(key)
-    }
+    open fun <T> getTweakValue(key: String): Flow<T?> = tweaksBusinessLogic.getValue(key)
 
     private fun initializeGraph(tweaksGraph: TweaksGraph) {
         tweaksBusinessLogic.initialize(tweaksGraph)
@@ -96,7 +80,8 @@ open class Tweaks {
 @Composable
 fun NavController.navigateToTweaksOnShake() {
     val context = LocalContext.current
-    val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val sensorManager: SensorManager =
+        context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     LaunchedEffect(true) {
         val shakeDetector = ShakeDetector {
             vibrateIfAble(context)
@@ -125,8 +110,11 @@ private fun vibrateIfAble(context: Context) {
 }
 
 fun NavGraphBuilder.addTweakGraph(
+    tweaksCustomTheme: @Composable (block: @Composable () -> Unit) -> Unit = {
+        MaterialTheme(colors = TweaksColorPalette, typography = TweaksTypography, content = it)
+    },
     navController: NavController,
-    customComposableScreens: NavGraphBuilder.() -> Unit = {}
+    customComposableScreens: NavGraphBuilder.() -> Unit = {},
 ) {
     val tweaksGraph = Tweaks.getReference().tweaksBusinessLogic.tweaksGraph
 
@@ -144,21 +132,25 @@ fun NavGraphBuilder.addTweakGraph(
     ) {
 
         composable(TWEAK_MAIN_SCREEN) {
-            TweaksScreen(
-                tweaksGraph = tweaksGraph,
-                onCategoryButtonClicked = { navController.navigate(it.navigationRoute())},
-                onNavigationEvent = onNavigationEvent,
-                onCustomNavigation = onCustomNavigation
-            )
+            tweaksCustomTheme {
+                TweaksScreen(
+                    tweaksGraph = tweaksGraph,
+                    onCategoryButtonClicked = { navController.navigate(it.navigationRoute()) },
+                    onNavigationEvent = onNavigationEvent,
+                    onCustomNavigation = onCustomNavigation
+                )
+            }
         }
 
         tweaksGraph.categories.forEach { category ->
             composable(category.navigationRoute()) {
-                TweaksCategoryScreen(
-                    tweakCategory = category,
-                    onNavigationEvent = onNavigationEvent,
-                    onCustomNavigation = onCustomNavigation
-                )
+                tweaksCustomTheme {
+                    TweaksCategoryScreen(
+                        tweakCategory = category,
+                        onNavigationEvent = onNavigationEvent,
+                        onCustomNavigation = onCustomNavigation
+                    )
+                }
             }
         }
         customComposableScreens()

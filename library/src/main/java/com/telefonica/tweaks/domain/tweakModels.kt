@@ -16,8 +16,8 @@ data class TweaksGraph(val cover: TweakGroup?, val categories: List<TweakCategor
         private val categories = mutableListOf<TweakCategory>()
         private var cover: TweakGroup? = null
 
-        fun cover(title: String, block: TweakGroup.Builder.() -> Unit) {
-            val builder = TweakGroup.Builder(title)
+        fun cover(title: String, withClearButton: Boolean = false, block: TweakGroup.Builder.() -> Unit) {
+            val builder = TweakGroup.Builder(title, withClearButton)
             builder.block()
             cover = builder.build()
         }
@@ -39,8 +39,12 @@ data class TweakCategory(val title: String, val groups: List<TweakGroup>) {
     class Builder(private val title: String) {
         private val groups = mutableListOf<TweakGroup>()
 
-        fun group(title: String, block: TweakGroup.Builder.() -> Unit) {
-            val builder = TweakGroup.Builder(title)
+        fun group(
+            title: String,
+            withClearButton: Boolean = true,
+            block: TweakGroup.Builder.() -> Unit,
+        ) {
+            val builder = TweakGroup.Builder(title, withClearButton)
             builder.block()
             groups.add(builder.build())
         }
@@ -50,50 +54,49 @@ data class TweakCategory(val title: String, val groups: List<TweakGroup>) {
 }
 
 /** A bunch of tweaks that are related to each other, for example: domain & port for the backend server configurations*/
-data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
-    class Builder(private val title: String) {
-        private val entries = mutableListOf<TweakEntry<*>>()
+data class TweakGroup(val title: String, val withClearButton: Boolean = true, val entries: List<TweakEntry>) {
+    class Builder(
+        private val title: String,
+        private val withClearButton: Boolean = true,
+    ) {
+        private val entries = mutableListOf<TweakEntry>()
 
-        fun tweak(entry: TweakEntry<*>) {
+        fun tweak(entry: TweakEntry) {
             entries.add(entry)
         }
 
         fun button(
-            key: String,
             name: String,
             action: () -> Unit,
         ) {
-            tweak(ButtonTweakEntry(key, name, action))
+            tweak(ButtonTweakEntry(name, action))
         }
 
         fun routeButton(
-            key: String,
             name: String,
             route: String,
         ) {
-            tweak(RouteButtonTweakEntry(key, name, route))
+            tweak(RouteButtonTweakEntry(name, route))
         }
 
         fun customNavigationButton(
-            key: String,
             name: String,
             navigation: (NavController) -> Unit,
         ) {
-            tweak(CustomNavigationButtonTweakEntry(key, name, navigation))
+            tweak(CustomNavigationButtonTweakEntry(name, navigation))
         }
 
         fun label(
-            key: String,
             name: String,
             value: () -> Flow<String>,
         ) {
-            tweak(ReadOnlyStringTweakEntry(key, name, value()))
+            tweak(ReadOnlyStringTweakEntry(name, value()))
         }
 
         fun editableString(
             key: String,
             name: String,
-            defaultValue: Flow<String> = flowOf(),
+            defaultValue: Flow<String>? = null,
         ) {
             tweak(EditableStringTweakEntry(key, name, defaultValue))
         }
@@ -109,7 +112,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
         fun editableBoolean(
             key: String,
             name: String,
-            defaultValue: Flow<Boolean> = flowOf(),
+            defaultValue: Flow<Boolean>? = null,
         ) {
             tweak(EditableBooleanTweakEntry(key, name, defaultValue))
         }
@@ -125,7 +128,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
         fun editableInt(
             key: String,
             name: String,
-            defaultValue: Flow<Int> = flowOf(),
+            defaultValue: Flow<Int>? = null,
         ) {
             tweak(EditableIntTweakEntry(key, name, defaultValue))
         }
@@ -141,7 +144,7 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
         fun editableLong(
             key: String,
             name: String,
-            defaultValue: Flow<Long> = flowOf(),
+            defaultValue: Flow<Long>? = null,
         ) {
             tweak(EditableLongTweakEntry(key, name, defaultValue))
         }
@@ -163,40 +166,53 @@ data class TweakGroup(val title: String, val entries: List<TweakEntry<*>>) {
             tweak(DropDownMenuTweakEntry(key, name, values, defaultValue))
         }
 
-        internal fun build(): TweakGroup = TweakGroup(title, entries)
+        internal fun build(): TweakGroup = TweakGroup(title, withClearButton, entries)
     }
 }
 
-sealed class TweakEntry<T>(val key: String, val name: String)
+sealed class TweakEntry(
+    val name: String,
+) : Modifiable
+
+sealed interface Modifiable
+interface Editable<T> : Modifiable {
+    val key: String
+    val defaultValue: Flow<T>?
+}
+
+interface ReadOnly<T> : Modifiable {
+    val value: Flow<T>
+}
 
 /** A button, with a customizable action*/
-class ButtonTweakEntry(key: String, name: String, val action: () -> Unit) :
-    TweakEntry<Unit>(key, name)
+class ButtonTweakEntry(name: String, val action: () -> Unit) :
+    TweakEntry(name = name)
 
 /** A button, that when tapped navigates to a route*/
-class RouteButtonTweakEntry(key: String, name: String, val route: String) :
-    TweakEntry<Unit>(key, name)
+class RouteButtonTweakEntry(name: String, val route: String) :
+    TweakEntry(name = name)
 
 /**
  * A button, that when tapped will execute the navigation specified
  * using the NavController it receives as param
  */
 class CustomNavigationButtonTweakEntry(
-    key: String,
     name: String,
-    val navigation: (NavController) -> Unit
-): TweakEntry<Unit>(key, name)
+    val navigation: (NavController) -> Unit,
+) : TweakEntry(name = name)
 
 /** A non editable entry */
-class ReadOnlyStringTweakEntry(key: String, name: String, override val value: Flow<String>) :
-    TweakEntry<String>(key, name), ReadOnly<String>
+class ReadOnlyStringTweakEntry(
+    name: String,
+    override val value: Flow<String>,
+) : TweakEntry(name), ReadOnly<String>
 
 /** An editable entry. It can be modified by using long-press*/
 class EditableStringTweakEntry(
-    key: String,
+    override val key: String,
     name: String,
-    override val defaultValue: Flow<String> = flowOf(),
-) : TweakEntry<String>(key, name), Editable<String> {
+    override val defaultValue: Flow<String>? = null,
+) : TweakEntry(name = name), Editable<String> {
     constructor(
         key: String,
         name: String,
@@ -206,10 +222,10 @@ class EditableStringTweakEntry(
 
 /** An editable entry. It can be modified by using long-press*/
 class EditableBooleanTweakEntry(
-    key: String,
+    override val key: String,
     name: String,
-    override val defaultValue: Flow<Boolean> = flowOf(),
-) : TweakEntry<Boolean>(key, name), Editable<Boolean> {
+    override val defaultValue: Flow<Boolean>? = null,
+) : TweakEntry(name = name), Editable<Boolean> {
     constructor(
         key: String,
         name: String,
@@ -219,10 +235,10 @@ class EditableBooleanTweakEntry(
 
 /** An editable entry. It can be modified by using long-press*/
 class EditableIntTweakEntry(
-    key: String,
+    override val key: String,
     name: String,
-    override val defaultValue: Flow<Int> = flowOf(),
-) : TweakEntry<Int>(key, name), Editable<Int> {
+    override val defaultValue: Flow<Int>? = null,
+) : TweakEntry(name), Editable<Int> {
     constructor(
         key: String,
         name: String,
@@ -232,10 +248,10 @@ class EditableIntTweakEntry(
 
 /** An editable entry. It can be modified by using long-press*/
 class EditableLongTweakEntry(
-    key: String,
+    override val key: String,
     name: String,
-    override val defaultValue: Flow<Long> = flowOf(),
-) : TweakEntry<Long>(key, name), Editable<Long> {
+    override val defaultValue: Flow<Long>? = null,
+) : TweakEntry(name = name), Editable<Long> {
     constructor(
         key: String,
         name: String,
@@ -244,26 +260,17 @@ class EditableLongTweakEntry(
 }
 
 class DropDownMenuTweakEntry(
-    key: String,
+    override val key: String,
     name: String,
     val values: List<String>,
     override val defaultValue: Flow<String>,
-) : TweakEntry<String>(key, name), Editable<String> {
+) : TweakEntry(name = name), Editable<String> {
     constructor(
         key: String,
         name: String,
         values: List<String>,
         defaultValue: String,
     ) : this(key, name, values, flowOf(defaultValue))
-}
-
-sealed interface Modifiable
-interface Editable<T> : Modifiable {
-    val defaultValue: Flow<T>
-}
-
-interface ReadOnly<T> : Modifiable {
-    val value: Flow<T>
 }
 
 internal object Constants {

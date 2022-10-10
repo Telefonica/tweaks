@@ -6,42 +6,32 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.telefonica.tweaks.domain.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 open class Tweaks {
 
-    private val keyToEntryValueMap: MutableMap<String, TweakEntry<*>> = mutableMapOf()
+    private val keyToEntryValueMap: MutableMap<String, Editable<*>> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
     open fun <T> getTweakValue(key: String): Flow<T?> {
-        val entry= keyToEntryValueMap[key] as TweakEntry<T>
+        val entry= keyToEntryValueMap[key] as TweakEntry
         return getTweakValue(entry)
     }
 
     @Suppress("UNCHECKED_CAST")
-    open fun <T> getTweakValue(entry: TweakEntry<T>): Flow<T?> = when (entry as Modifiable) {
+    private fun <T> getTweakValue(entry: TweakEntry): Flow<T?> = when (entry) {
         is ReadOnly<*> -> (entry as ReadOnly<T>).value
-        is Editable<*> -> (entry as Editable<T>).defaultValue
-    }
-
-    open suspend fun <T> setTweakValue(key: String, value: T?) {
-    }
-
-    open suspend fun <T> setTweakValue(entry: TweakEntry<T>, value: T?) {
-    }
-
-    open suspend fun <T> clearValue(entry: TweakEntry<T>) {
-    }
-
-    open suspend fun <T> clearValue(key: String) {
+        is Editable<*> -> (entry as Editable<T>).defaultValue ?: flowOf()
+        else -> flowOf()
     }
 
     private fun initialize(tweaksGraph: TweaksGraph) {
-        val allEntries: List<TweakEntry<*>> = tweaksGraph.categories
+        val allEntries: List<Editable<*>> = tweaksGraph.categories
             .flatMap { category ->
                 category.groups.flatMap { group ->
                     group.entries
                 }
-            }
+            }.filterIsInstance<Editable<*>>()
         allEntries.forEach { entry ->
             keyToEntryValueMap[entry.key] = entry
         }
