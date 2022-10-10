@@ -1,17 +1,19 @@
 package com.telefonica.tweaks.domain
 
-import com.telefonica.tweaks.data.TweaksDataStore
+import com.telefonica.tweaks.data.TweaksRepository
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 class TweaksBusinessLogicTest {
 
-    private val tweaksDataStore: TweaksDataStore = mock()
-    private val sut: TweaksBusinessLogic = TweaksBusinessLogic(tweaksDataStore)
+    private val tweaksRepository: TweaksRepository = mock()
+    private val sut: TweaksBusinessLogic = TweaksBusinessLogic(tweaksRepository)
 
     @Test
     fun `a tweak added as a cover is in the graph`() = runBlocking {
@@ -19,13 +21,16 @@ class TweaksBusinessLogicTest {
 
         sut.initialize(graph)
 
-        assertEquals(A_COVER_ENTRY_VALUE, sut.getValue<String>(A_COVER_ENTRY_KEY).first())
+        val result = sut.getValue<String>(A_COVER_ENTRY_KEY).first()
+        assertEquals(A_COVER_ENTRY_VALUE, result)
     }
 
     private fun givenATweaksGraphThatHasACover(): TweaksGraph = tweaksGraph {
         cover(COVER_TITLE) {
-            label(A_COVER_ENTRY_NAME) { flowOf(A_COVER_ENTRY_VALUE) }
+            editableString(key = A_COVER_ENTRY_KEY, name = A_COVER_ENTRY_NAME, defaultValue = A_COVER_ENTRY_VALUE)
         }
+
+        whenever(tweaksRepository.isOverriden(any())).thenReturn(flowOf(false))
     }
 
     companion object {

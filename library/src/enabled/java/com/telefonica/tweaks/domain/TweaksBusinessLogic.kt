@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.telefonica.tweaks.data.TweaksDataStore
+import com.telefonica.tweaks.data.TweaksRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
@@ -19,7 +20,7 @@ import javax.inject.Singleton
 @Suppress("UNCHECKED_CAST")
 @Singleton
 class TweaksBusinessLogic @Inject constructor(
-    private val tweaksDataStore: TweaksDataStore,
+    private val tweaksRepository: TweaksRepository
 ) {
 
     internal lateinit var tweaksGraph: TweaksGraph
@@ -80,8 +81,8 @@ class TweaksBusinessLogic @Inject constructor(
             }
     }
 
-    private fun isOverriden(entry: Editable<*>): Flow<Boolean> = tweaksDataStore.data
-        .map { preferences -> preferences[buildIsOverridenKey(entry)] ?: OVERRIDEN_DEFAULT_VALUE }
+    private fun isOverriden(entry: Editable<*>): Flow<Boolean> =
+        tweaksRepository.isOverriden(entry).map { it ?: OVERRIDEN_DEFAULT_VALUE }
 
     fun <T> isOverriddenOrDifferentFromDefaultValue(entry: Editable<T>): Flow<Boolean> {
         val valueFlow = getValue<T>(entry.key)
@@ -97,27 +98,14 @@ class TweaksBusinessLogic @Inject constructor(
         }
     }
 
-    private fun <T> getFromStorage(entry: Editable<T>) =
-        tweaksDataStore.data
-            .map { preferences -> preferences[buildKey(entry)] }
+    private fun <T> getFromStorage(entry: Editable<T>) = tweaksRepository.get(entry)
 
     internal suspend fun clearValue(entry: Editable<*>) {
-        tweaksDataStore.edit {
-            it.remove(buildKey(entry))
-            it.remove(buildIsOverridenKey(entry))
-        }
+        tweaksRepository.clearValue(entry)
     }
 
     suspend fun <T> setValue(entry: Editable<T>, value: T?) {
-        tweaksDataStore.edit {
-            if (value != null) {
-                it[buildKey(entry)] = value
-                it[buildIsOverridenKey(entry)] = true
-            } else {
-                it.remove(buildKey(entry))
-                it[buildIsOverridenKey(entry)] = false
-            }
-        }
+        tweaksRepository.setValue(entry, value)
     }
 
     suspend fun <T> setValue(key: String, value: T?) {
@@ -129,19 +117,6 @@ class TweaksBusinessLogic @Inject constructor(
         val tweakEntry = keyToEntryValueMap[key] as Editable<T>
         clearValue(tweakEntry)
     }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <T> buildKey(entry: Editable<T>): Preferences.Key<T> = when (entry) {
-        is EditableStringTweakEntry -> stringPreferencesKey(entry.key) as Preferences.Key<T>
-        is EditableBooleanTweakEntry -> booleanPreferencesKey(entry.key) as Preferences.Key<T>
-        is EditableIntTweakEntry -> intPreferencesKey(entry.key) as Preferences.Key<T>
-        is EditableLongTweakEntry -> longPreferencesKey(entry.key) as Preferences.Key<T>
-        is DropDownMenuTweakEntry -> stringPreferencesKey(entry.key) as Preferences.Key<T>
-        else -> throw java.lang.IllegalStateException("Unknown tweak entry")
-    }
-
-    private fun buildIsOverridenKey(entry: Editable<*>): Preferences.Key<Boolean> =
-        booleanPreferencesKey("${entry.key}.TweakOverriden")
 
     companion object {
         private const val OVERRIDEN_DEFAULT_VALUE = false
