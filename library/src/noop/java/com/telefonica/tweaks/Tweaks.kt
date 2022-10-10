@@ -58,7 +58,8 @@ open class Tweaks {
 
 fun NavGraphBuilder.addTweakGraph(
     navController: NavController,
-    customComposableScreens: NavGraphBuilder.() -> Unit = {}
+    tweaksCustomTheme: @Composable (block: @Composable () -> Unit) -> Unit = { it() },
+    customComposableScreens: NavGraphBuilder.() -> Unit = {},
 ) {}
 
 @Composable

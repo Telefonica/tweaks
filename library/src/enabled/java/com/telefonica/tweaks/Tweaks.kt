@@ -110,10 +110,10 @@ private fun vibrateIfAble(context: Context) {
 }
 
 fun NavGraphBuilder.addTweakGraph(
+    navController: NavController,
     tweaksCustomTheme: @Composable (block: @Composable () -> Unit) -> Unit = {
         MaterialTheme(colors = TweaksColorPalette, typography = TweaksTypography, content = it)
     },
-    navController: NavController,
     customComposableScreens: NavGraphBuilder.() -> Unit = {},
 ) {
     val tweaksGraph = Tweaks.getReference().tweaksBusinessLogic.tweaksGraph
