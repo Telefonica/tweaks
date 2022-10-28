@@ -8,5 +8,5 @@ import androidx.compose.ui.graphics.Color
 fun DebugTweaksTheme(
     content: @Composable () -> Unit
 ) {
-    MaterialTheme(colors = TweaksColorPalette.copy(background = Color.Blue), typography = TweaksTypography, content = content)
+    MaterialTheme(colors = TweaksColorPalette, typography = TweaksTypography, content = content)
 }
