@@ -15,8 +15,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -25,6 +27,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
@@ -39,6 +42,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -51,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.telefonica.tweaks.TweaksTheme
 import com.telefonica.tweaks.domain.ButtonTweakEntry
 import com.telefonica.tweaks.domain.CustomNavigationButtonTweakEntry
 import com.telefonica.tweaks.domain.DropDownMenuTweakEntry
@@ -175,22 +180,18 @@ fun TweakGroupBody(
 private fun ResetButton(
     onResetClicked: () -> Unit = {},
 ) {
-    Button(
+    TweakButton(
         onClick = onResetClicked,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text("⚠️ Reset ⚠️")
-    }
+        text = "⚠️ Reset ⚠️",
+    )
 }
 
 @Composable
 fun TweakButton(entry: ButtonTweakEntry) {
-    Button(
+    TweakButton(
         onClick = entry.action,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(entry.name)
-    }
+        text = entry.name,
+    )
 }
 
 @Composable
@@ -198,12 +199,10 @@ fun TweakNavigableButton(
     entry: RouteButtonTweakEntry,
     onClick: (String) -> Unit,
 ) {
-    Button(
+    TweakButton(
         onClick = { onClick(entry.route) },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(entry.name)
-    }
+        text = entry.name,
+    )
 }
 
 @Composable
@@ -211,12 +210,10 @@ fun TweakNavigableButton(
     entry: CustomNavigationButtonTweakEntry,
     customNavigation: ((NavController) -> Unit) -> Unit,
 ) {
-    Button(
+    TweakButton(
         onClick = { customNavigation(entry.navigation) },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(entry.name)
-    }
+        text = entry.name,
+    )
 }
 
 @Composable
@@ -507,6 +504,17 @@ private fun TweakNameText(
     }
 }
 
+@Composable
+private fun ButtonDefaults.tweaksButtonColors() = ButtonDefaults.buttonColors(
+    backgroundColor = TweaksTheme.colors.tweaksPrimary,
+    contentColor = contentColorFor(backgroundColor = TweaksTheme.colors.tweaksBackground),
+    disabledBackgroundColor = TweaksTheme.colors.tweaksOnSufrace.copy(alpha = 0.12f)
+        .compositeOver(TweaksTheme.colors.tweaksSurface),
+    disabledContentColor = TweaksTheme.colors.tweaksOnSufrace
+        .copy(alpha = ContentAlpha.disabled),
+
+    )
+
 @Preview
 @Composable
 fun StringTweakEntryPreview() {
@@ -516,4 +524,19 @@ fun StringTweakEntryPreview() {
             name = "Example",
         )
     )
+}
+
+@Composable
+internal fun TweakButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        colors = ButtonDefaults.tweaksButtonColors()
+    ) {
+        Text(text)
+    }
 }

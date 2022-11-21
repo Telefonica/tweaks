@@ -9,10 +9,10 @@ val TweaksDarkBlue900 = Color(0xFF26282F)
 
 // Rally is always dark themed.
 val TweaksColorPalette = darkColors(
-    primary = TweaksGreen500,
-    primaryVariant = TweaksGreen500,
-    surface = TweaksDarkBlue900,
+    primary = Color.Blue,
+    primaryVariant = Color.Blue,
+    surface = Color.White,
     onSurface = Color.White,
-    background = TweaksDarkBlue900,
+    background = Color.White,
     onBackground = Color.White
 )
