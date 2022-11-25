@@ -37,7 +37,7 @@ val LocalTweaksColors = staticCompositionLocalOf {
 }
 
 @Composable
-fun TweaksTheme(
+fun DefaultTweaksTheme(
     content: @Composable () -> Unit,
 ) {
     val tweaksColors = TweaksColors(
