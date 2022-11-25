@@ -19,7 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.telefonica.tweaks.ui.theme.DebugTweaksTheme
+import com.telefonica.tweaks.demo.theme.DebugTweaksTheme
 import com.telefonica.tweaks.addTweakGraph
 import com.telefonica.tweaks.navigateToTweaksOnShake
 
