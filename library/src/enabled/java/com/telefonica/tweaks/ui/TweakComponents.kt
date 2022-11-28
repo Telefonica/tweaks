@@ -16,8 +16,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxColors
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -26,6 +31,9 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldColors
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
@@ -40,7 +48,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -53,6 +61,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.telefonica.tweaks.TweaksTheme
 import com.telefonica.tweaks.domain.ButtonTweakEntry
 import com.telefonica.tweaks.domain.CustomNavigationButtonTweakEntry
 import com.telefonica.tweaks.domain.DropDownMenuTweakEntry
@@ -80,7 +89,7 @@ fun TweaksScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
+            .background(TweaksTheme.colors.tweaksBackground)
             .padding(16.dp)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -94,11 +103,10 @@ fun TweaksScreen(
             )
         }
         tweaksGraph.categories.forEach { category ->
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { onCategoryButtonClicked(category) }) {
-                Text(category.title)
-            }
+            TweakButton(
+                onClick = { onCategoryButtonClicked(category) },
+                text = category.title,
+            )
         }
     }
 }
@@ -113,13 +121,17 @@ fun TweaksCategoryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
+            .background(TweaksTheme.colors.tweaksBackground)
             .padding(16.dp)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(tweakCategory.title, style = MaterialTheme.typography.h4)
+        Text(
+            tweakCategory.title,
+            style = MaterialTheme.typography.h4,
+            color = TweaksTheme.colors.tweaksOnBackground,
+        )
 
         tweakCategory.groups.forEach { group ->
             TweakGroupBody(
@@ -142,10 +154,16 @@ fun TweakGroupBody(
         elevation = 3.dp
     ) {
         Column(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .background(TweaksTheme.colors.tweaksGroupBackground)
+                .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(tweakGroup.title, style = MaterialTheme.typography.h5)
+            Text(
+                tweakGroup.title,
+                style = MaterialTheme.typography.h5,
+                color = TweaksTheme.colors.tweaksOnBackground,
+            )
             Divider(thickness = 2.dp)
             tweakGroup.entries.forEach { entry ->
                 when (entry) {
@@ -179,22 +197,18 @@ fun TweakGroupBody(
 private fun ResetButton(
     onResetClicked: () -> Unit = {},
 ) {
-    Button(
+    TweakButton(
         onClick = onResetClicked,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text("⚠️ Reset ⚠️")
-    }
+        text = "⚠️ Reset ⚠️",
+    )
 }
 
 @Composable
 fun TweakButton(entry: ButtonTweakEntry) {
-    Button(
+    TweakButton(
         onClick = entry.action,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(entry.name)
-    }
+        text = entry.name,
+    )
 }
 
 @Composable
@@ -202,12 +216,10 @@ fun TweakNavigableButton(
     entry: RouteButtonTweakEntry,
     onClick: (String) -> Unit,
 ) {
-    Button(
+    TweakButton(
         onClick = { onClick(entry.route) },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(entry.name)
-    }
+        text = entry.name,
+    )
 }
 
 @Composable
@@ -215,12 +227,10 @@ fun TweakNavigableButton(
     entry: CustomNavigationButtonTweakEntry,
     customNavigation: ((NavController) -> Unit) -> Unit,
 ) {
-    Button(
+    TweakButton(
         onClick = { customNavigation(entry.navigation) },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text(entry.name)
-    }
+        text = entry.name,
+    )
 }
 
 @Composable
@@ -296,9 +306,13 @@ fun EditableBooleanTweakEntryBody(
                 .show()
         },
         shouldShowOverriddenLabel = isOverridden) {
-        Checkbox(checked = value ?: false, onCheckedChange = {
-            tweakRowViewModel.setValue(entry, it)
-        })
+        Checkbox(
+            checked = value ?: false,
+            onCheckedChange = {
+                tweakRowViewModel.setValue(entry, it)
+            },
+            colors = CheckboxDefaults.tweaksCheckboxColors(),
+        )
     }
 }
 
@@ -400,7 +414,10 @@ fun DropDownMenuTweakEntryBody(
                 expanded = false
                 tweakRowViewModel.setValue(entry, items[selectedIndex])
             }) {
-                Text(text = value)
+                Text(
+                    text = value,
+                    color = TweaksTheme.colors.tweaksOnSurface
+                )
             }
         }
     }
@@ -462,6 +479,7 @@ private fun <T> TweakRowWithEditableTextField(
                     inEditionMode = false
                     keyboardController?.hide()
                 }),
+                colors = TextFieldDefaults.tweaksTextFieldColors(),
             )
             IconButton(onClick = {
                 tweakRowViewModel.clearValue(entry as Editable<T>)
@@ -506,10 +524,37 @@ private fun TweakNameText(
         if (shouldShowOverriddenLabel) {
             Text("(Modified)",
                 style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.primaryVariant)
+                color = TweaksTheme.colors.tweaksColorModified)
         }
     }
 }
+
+@Composable
+private fun ButtonDefaults.tweaksButtonColors(): ButtonColors = ButtonDefaults.buttonColors(
+    backgroundColor = TweaksTheme.colors.tweaksPrimary,
+    contentColor = contentColorFor(backgroundColor = TweaksTheme.colors.tweaksBackground),
+    disabledBackgroundColor = TweaksTheme.colors.tweaksOnSurface.copy(alpha = 0.12f)
+        .compositeOver(TweaksTheme.colors.tweaksSurface),
+    disabledContentColor = TweaksTheme.colors.tweaksOnSurface
+        .copy(alpha = ContentAlpha.disabled),
+    )
+
+@Composable
+private fun CheckboxDefaults.tweaksCheckboxColors(): CheckboxColors = CheckboxDefaults.colors(
+    checkedColor = TweaksTheme.colors.tweaksPrimary,
+)
+
+@Composable
+private fun TextFieldDefaults.tweaksTextFieldColors(): TextFieldColors = TextFieldDefaults.textFieldColors(
+    textColor = TweaksTheme.colors.tweaksOnBackground,
+    disabledTextColor = TweaksTheme.colors.tweaksOnBackground.copy(alpha = 0.8F),
+    cursorColor = TweaksTheme.colors.tweaksPrimary,
+    focusedLabelColor = TweaksTheme.colors.tweaksPrimary,
+    focusedIndicatorColor = TweaksTheme.colors.tweaksPrimary,
+    unfocusedIndicatorColor = TweaksTheme.colors.tweaksPrimary,
+    unfocusedLabelColor = TweaksTheme.colors.tweaksPrimary,
+    disabledLabelColor = TweaksTheme.colors.tweaksPrimary,
+)
 
 @Preview
 @Composable
@@ -520,4 +565,22 @@ fun StringTweakEntryPreview() {
             name = "Example",
         )
     )
+}
+
+@Composable
+internal fun TweakButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        colors = ButtonDefaults.tweaksButtonColors()
+    ) {
+        Text(
+            text = text,
+            color = TweaksTheme.colors.tweaksOnPrimary,
+        )
+    }
 }
