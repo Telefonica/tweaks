@@ -103,7 +103,7 @@ fun TweaksScreen(
             )
         }
         tweaksGraph.categories.forEach { category ->
-            TweakCategoryButton(
+            TweakButton(
                 onClick = { onCategoryButtonClicked(category) },
                 text = category.title,
             )
@@ -230,17 +230,6 @@ fun TweakNavigableButton(
     TweakButton(
         onClick = { customNavigation(entry.navigation) },
         text = entry.name,
-    )
-}
-
-@Composable
-fun TweakCategoryButton(
-    onClick: () -> Unit,
-    text: String,
-) {
-    TweakButton(
-        onClick = onClick,
-        text = text,
     )
 }
 
@@ -548,7 +537,6 @@ private fun ButtonDefaults.tweaksButtonColors(): ButtonColors = ButtonDefaults.b
         .compositeOver(TweaksTheme.colors.tweaksSurface),
     disabledContentColor = TweaksTheme.colors.tweaksOnSurface
         .copy(alpha = ContentAlpha.disabled),
-
     )
 
 @Composable
