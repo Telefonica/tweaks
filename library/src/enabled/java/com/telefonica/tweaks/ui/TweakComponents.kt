@@ -48,7 +48,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -489,7 +488,11 @@ private fun <T> TweakRowWithEditableTextField(
                 inEditionMode = false
                 keyboardController?.hide()
             }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "delete", tint = TweaksTheme.colors.tweaksOnBackground)
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "delete",
+                    tint = TweaksTheme.colors.tweaksOnBackground
+                )
             }
         }
 
@@ -524,7 +527,9 @@ private fun TweakNameText(
     shouldShowOverriddenLabel: Boolean = false,
 ) {
     Row {
-        Text(text = entry.name, style = MaterialTheme.typography.body1, color = TweaksTheme.colors.tweaksOnBackground)
+        Text(text = entry.name,
+            style = MaterialTheme.typography.body1,
+            color = TweaksTheme.colors.tweaksOnBackground)
         if (shouldShowOverriddenLabel) {
             Text("(Modified)",
                 style = MaterialTheme.typography.caption,
@@ -541,7 +546,7 @@ private fun ButtonDefaults.tweaksButtonColors(): ButtonColors = ButtonDefaults.b
         .compositeOver(TweaksTheme.colors.tweaksSurface),
     disabledContentColor = TweaksTheme.colors.tweaksOnSurface
         .copy(alpha = ContentAlpha.disabled),
-    )
+)
 
 @Composable
 private fun CheckboxDefaults.tweaksCheckboxColors(): CheckboxColors = CheckboxDefaults.colors(
@@ -551,16 +556,17 @@ private fun CheckboxDefaults.tweaksCheckboxColors(): CheckboxColors = CheckboxDe
 )
 
 @Composable
-private fun TextFieldDefaults.tweaksTextFieldColors(): TextFieldColors = TextFieldDefaults.textFieldColors(
-    textColor = TweaksTheme.colors.tweaksOnBackground,
-    disabledTextColor = TweaksTheme.colors.tweaksOnBackground.copy(alpha = 0.8F),
-    cursorColor = TweaksTheme.colors.tweaksPrimary,
-    focusedLabelColor = TweaksTheme.colors.tweaksPrimary,
-    focusedIndicatorColor = TweaksTheme.colors.tweaksPrimary,
-    unfocusedIndicatorColor = TweaksTheme.colors.tweaksPrimary,
-    unfocusedLabelColor = TweaksTheme.colors.tweaksPrimary,
-    disabledLabelColor = TweaksTheme.colors.tweaksPrimary,
-)
+private fun TextFieldDefaults.tweaksTextFieldColors(): TextFieldColors =
+    TextFieldDefaults.textFieldColors(
+        textColor = TweaksTheme.colors.tweaksOnBackground,
+        disabledTextColor = TweaksTheme.colors.tweaksOnBackground.copy(alpha = 0.8F),
+        cursorColor = TweaksTheme.colors.tweaksPrimary,
+        focusedLabelColor = TweaksTheme.colors.tweaksPrimary,
+        focusedIndicatorColor = TweaksTheme.colors.tweaksPrimary,
+        unfocusedIndicatorColor = TweaksTheme.colors.tweaksPrimary,
+        unfocusedLabelColor = TweaksTheme.colors.tweaksPrimary,
+        disabledLabelColor = TweaksTheme.colors.tweaksPrimary,
+    )
 
 @Preview
 @Composable
