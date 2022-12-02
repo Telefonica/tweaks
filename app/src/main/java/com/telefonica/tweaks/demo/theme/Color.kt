@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.Color
 val TweaksColorPalette = darkColors(
     primary = Color.Blue,
     primaryVariant = Color.Blue,
-    surface = Color.White,
-    onSurface = Color.White,
-    background = Color.White,
-    onBackground = Color.White
+    surface = Color.Black,
+    onSurface = Color.Black,
+    background = Color.Black,
+    onBackground = Color.Black
 )

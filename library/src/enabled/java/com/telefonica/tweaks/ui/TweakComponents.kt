@@ -48,6 +48,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -259,6 +260,7 @@ fun ReadOnlyStringTweakEntryBody(
         Text(
             text = "$value",
             fontFamily = FontFamily.Monospace,
+            color = TweaksTheme.colors.tweaksOnBackground
         )
     }
 }
@@ -400,6 +402,7 @@ fun DropDownMenuTweakEntryBody(
         Text(
             text = "$value",
             fontFamily = FontFamily.Monospace,
+            color = TweaksTheme.colors.tweaksOnBackground,
         )
     }
     DropdownMenu(
@@ -486,7 +489,7 @@ private fun <T> TweakRowWithEditableTextField(
                 inEditionMode = false
                 keyboardController?.hide()
             }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "delete")
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "delete", tint = TweaksTheme.colors.tweaksOnBackground)
             }
         }
 
@@ -509,6 +512,7 @@ private fun <T> TweakRowWithEditableTextField(
             Text(
                 text = if (value == null) "<not defined>" else "$value",
                 fontFamily = FontFamily.Monospace,
+                color = TweaksTheme.colors.tweaksOnBackground,
             )
         }
     }
@@ -520,7 +524,7 @@ private fun TweakNameText(
     shouldShowOverriddenLabel: Boolean = false,
 ) {
     Row {
-        Text(text = entry.name, style = MaterialTheme.typography.body1)
+        Text(text = entry.name, style = MaterialTheme.typography.body1, color = TweaksTheme.colors.tweaksOnBackground)
         if (shouldShowOverriddenLabel) {
             Text("(Modified)",
                 style = MaterialTheme.typography.caption,
@@ -542,6 +546,8 @@ private fun ButtonDefaults.tweaksButtonColors(): ButtonColors = ButtonDefaults.b
 @Composable
 private fun CheckboxDefaults.tweaksCheckboxColors(): CheckboxColors = CheckboxDefaults.colors(
     checkedColor = TweaksTheme.colors.tweaksPrimary,
+    checkmarkColor = TweaksTheme.colors.tweaksOnPrimary,
+    uncheckedColor = TweaksTheme.colors.tweaksPrimary,
 )
 
 @Composable
