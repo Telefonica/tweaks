@@ -46,6 +46,10 @@ android {
             dimension "tweaksMode"
         }
     }
+    lint {
+        sarifReport true
+        checkDependencies true
+    }
 }
 
 dependencies {

@@ -33,8 +33,10 @@ detekt {
     reports {
         html.enabled = true
         xml.enabled = true
+        sarif.enabled = true
         xml.destination = file("$buildDir/reports/detekt/detekt-checkstyle.xml")
         html.destination = file("$buildDir/reports/detekt/detekt-report.html")
+        sarif.destination = file("$buildDir/reports/detekt/detekt-report.sarif")
     }
 }
 

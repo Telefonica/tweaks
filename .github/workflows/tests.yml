@@ -22,11 +22,25 @@ jobs:
 
       ## Build all our Build Types at once ##
       - name: Build all artifacts
-        id: buildAllApks
+        id: runTests
         uses: eskatos/gradle-command-action@v1.3.3
         with:
           gradle-version: current
           wrapper-cache-enabled: false
           dependencies-cache-enabled: false
           configuration-cache-enabled: false
-          arguments: assembleRelease check detekt
+          arguments: assembleRelease check detekt lint
+
+      - name: Upload Detekt results
+        uses: github/codeql-action/upload-sarif@v2
+        if: success() || failure()
+        with:
+          sarif_file: build/reports/detekt/detekt-report.sarif
+          category: detekt
+
+      - name: Upload Lint results
+        uses: github/codeql-action/upload-sarif@v2
+        if: success() || failure()
+        with:
+          sarif_file: app/build/reports/lint-results-debug.sarif
+          category: lint
