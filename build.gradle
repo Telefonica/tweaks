@@ -29,6 +29,7 @@ detekt {
     config = files("$projectDir/detekt.yml")
     failFast = true
     buildUponDefaultConfig = true
+    basePath = projectDir
 
     reports {
         html.enabled = true
