@@ -1,12 +1,5 @@
 package com.telefonica.tweaks.domain
 
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.telefonica.tweaks.data.TweaksDataStore
 import com.telefonica.tweaks.data.TweaksRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
