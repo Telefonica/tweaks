@@ -17,7 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxColors
@@ -77,7 +77,6 @@ import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweakGroup
 import com.telefonica.tweaks.domain.TweaksGraph
 import kotlin.math.max
-import android.util.Log
 
 @Composable
 fun TweaksScreen(
@@ -103,7 +102,7 @@ fun TweaksScreen(
                 onCustomNavigation = onCustomNavigation,
             )
         }
-        tweaksGraph.categories.forEach { category ->
+        tweaksGraph.categories.iterator().forEach { category ->
             TweakButton(
                 onClick = { onCategoryButtonClicked(category) },
                 text = category.title,
@@ -134,7 +133,7 @@ fun TweaksCategoryScreen(
             color = TweaksTheme.colors.tweaksOnBackground,
         )
 
-        tweakCategory.groups.forEach { group ->
+        tweakCategory.groups.iterator().forEach { group ->
             TweakGroupBody(
                 tweakGroup = group,
                 onNavigationEvent = onNavigationEvent,
@@ -166,7 +165,7 @@ fun TweakGroupBody(
                 color = TweaksTheme.colors.tweaksOnBackground,
             )
             Divider(thickness = 2.dp)
-            tweakGroup.entries.forEach { entry ->
+            tweakGroup.entries.iterator().forEach { entry ->
                 when (entry) {
                     is EditableStringTweakEntry -> EditableStringTweakEntryBody(entry,
                         EditableTweakEntryViewModel())
@@ -313,7 +312,7 @@ fun EditableBooleanTweakEntryBody(
             onCheckedChange = {
                 tweakRowViewModel.setValue(entry, it)
             },
-            colors = CheckboxDefaults.tweaksCheckboxColors(),
+            colors = tweaksCheckboxColors(),
         )
     }
 }
@@ -482,7 +481,7 @@ private fun <T> TweakRowWithEditableTextField(
                     inEditionMode = false
                     keyboardController?.hide()
                 }),
-                colors = TextFieldDefaults.tweaksTextFieldColors(),
+                colors = tweaksTextFieldColors(),
             )
             IconButton(onClick = {
                 tweakRowViewModel.clearValue(entry as Editable<T>)
@@ -540,7 +539,7 @@ private fun TweakNameText(
 }
 
 @Composable
-private fun ButtonDefaults.tweaksButtonColors(): ButtonColors = ButtonDefaults.buttonColors(
+private fun tweaksButtonColors(): ButtonColors = buttonColors(
     backgroundColor = TweaksTheme.colors.tweaksPrimary,
     contentColor = contentColorFor(backgroundColor = TweaksTheme.colors.tweaksBackground),
     disabledBackgroundColor = TweaksTheme.colors.tweaksOnSurface.copy(alpha = 0.12f)
@@ -550,14 +549,14 @@ private fun ButtonDefaults.tweaksButtonColors(): ButtonColors = ButtonDefaults.b
 )
 
 @Composable
-private fun CheckboxDefaults.tweaksCheckboxColors(): CheckboxColors = CheckboxDefaults.colors(
+private fun tweaksCheckboxColors(): CheckboxColors = CheckboxDefaults.colors(
     checkedColor = TweaksTheme.colors.tweaksPrimary,
     checkmarkColor = TweaksTheme.colors.tweaksOnPrimary,
     uncheckedColor = TweaksTheme.colors.tweaksPrimary,
 )
 
 @Composable
-private fun TextFieldDefaults.tweaksTextFieldColors(): TextFieldColors =
+private fun tweaksTextFieldColors(): TextFieldColors =
     TextFieldDefaults.textFieldColors(
         textColor = TweaksTheme.colors.tweaksOnBackground,
         disabledTextColor = TweaksTheme.colors.tweaksOnBackground.copy(alpha = 0.8F),
@@ -589,7 +588,7 @@ internal fun TweakButton(
     Button(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        colors = ButtonDefaults.tweaksButtonColors()
+        colors = tweaksButtonColors()
     ) {
         Text(
             text = text,
