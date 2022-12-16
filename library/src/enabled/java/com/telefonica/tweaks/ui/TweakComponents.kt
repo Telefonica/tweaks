@@ -77,6 +77,7 @@ import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweakGroup
 import com.telefonica.tweaks.domain.TweaksGraph
 import kotlin.math.max
+import android.util.Log
 
 @Composable
 fun TweaksScreen(
