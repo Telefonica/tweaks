@@ -26,6 +26,8 @@ style:
     active: false
   WildcardImport:
     active: false
+  UnusedImports:
+    active: true
 
 exceptions:
   TooGenericExceptionThrown:

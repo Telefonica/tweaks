@@ -138,7 +138,7 @@ fun NavGraphBuilder.addTweakGraph(
             }
         }
 
-        tweaksGraph.categories.forEach { category ->
+        tweaksGraph.categories.iterator().forEach { category ->
             composable(category.navigationRoute()) {
                 tweaksCustomTheme {
                     TweaksCategoryScreen(
