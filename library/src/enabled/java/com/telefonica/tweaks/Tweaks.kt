@@ -108,7 +108,7 @@ private fun vibrateIfAble(context: Context) {
 fun NavGraphBuilder.addTweakGraph(
     navController: NavController,
     tweaksCustomTheme: @Composable (block: @Composable () -> Unit) -> Unit = {
-         DefaultTweaksTheme(content = it)
+        DefaultTweaksTheme(content = it)
     },
     customComposableScreens: NavGraphBuilder.() -> Unit = {},
 ) {
