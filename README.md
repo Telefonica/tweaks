@@ -1,4 +1,3 @@
-
 <p align="center">
 <img src="https://img.shields.io/badge/Platform-Android-brightgreen" />
 <img src="https://maven-badges.herokuapp.com/maven-central/com.telefonica/tweaks/badge.png" />
@@ -34,7 +33,7 @@ Then initialize the library in your app's `onCreate`:
 ```kotlin
 override fun onCreate() {
     super.onCreate()
-    Tweaks.init(this@TweakDemoApplication, demoTweakGraph())
+    Tweaks.init(context, demoTweakGraph())
 }
 ```
 
