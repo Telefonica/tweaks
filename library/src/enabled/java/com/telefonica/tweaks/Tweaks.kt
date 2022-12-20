@@ -2,7 +2,6 @@ package com.telefonica.tweaks
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
@@ -50,10 +49,10 @@ open class Tweaks {
         private lateinit var component: TweaksComponent
 
         fun init(
-            application: Application,
+            context: Context,
             tweaksGraph: TweaksGraph,
         ) {
-            inject(application)
+            inject(context)
 
             reference.initializeGraph(tweaksGraph)
         }
@@ -61,10 +60,10 @@ open class Tweaks {
         @JvmStatic
         fun getReference(): Tweaks = reference
 
-        private fun inject(application: Application) {
+        private fun inject(context: Context) {
             component = DaggerTweaksComponent
                 .builder()
-                .tweaksModule(TweaksModule(application))
+                .tweaksModule(TweaksModule(context))
                 .build()
 
             component.inject(reference)

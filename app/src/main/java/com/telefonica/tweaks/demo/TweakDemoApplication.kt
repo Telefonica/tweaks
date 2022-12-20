@@ -3,7 +3,7 @@ package com.telefonica.tweaks.demo
 import android.app.Application
 import android.widget.Toast
 import com.telefonica.tweaks.Tweaks
-import com.telefonica.tweaks.domain.*
+import com.telefonica.tweaks.domain.tweaksGraph
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flowOf
 class TweakDemoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        Tweaks.init(this@TweakDemoApplication, demoTweakGraph())
+        Tweaks.init(this, demoTweakGraph())
     }
 
     var timestampState = flow {
@@ -56,26 +56,26 @@ private fun demoTweakGraph() = tweaksGraph {
                 defaultValue = 42L,
             )
 
-            button(
-                name = "Demo button"
-            ) {
-                Toast.makeText(this@TweakDemoApplication, "Demo button", Toast.LENGTH_LONG)
-                    .show()
-            }
-            routeButton(
-                name = "Custom screen button",
-                route = "custom-screen"
-            )
-            customNavigationButton(
-                name = "Another custom screen button",
-                navigation = { navController ->
-                    navController.navigate("custom-screen")
+                button(
+                    name = "Demo button"
+                ) {
+                    Toast.makeText(this@TweakDemoApplication, "Demo button", Toast.LENGTH_LONG)
+                        .show()
                 }
-            )
+                routeButton(
+                    name = "Custom screen button",
+                    route = "custom-screen"
+                )
+                customNavigationButton(
+                    name = "Another custom screen button",
+                    navigation = { navController ->
+                        navController.navigate("custom-screen")
+                    }
+                )
+            }
         }
+        category("API") {}
+        category("Chat") {}
+        category("Crash reporting") {}
     }
-    category("API") {}
-    category("Chat") {}
-    category("Crash reporting") {}
-}
 }
