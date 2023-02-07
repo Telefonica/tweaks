@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -437,7 +438,7 @@ private fun TweakRow(
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
@@ -448,6 +449,7 @@ private fun TweakRow(
             )
     ) {
         TweakNameText(entry = tweakEntry, shouldShowOverriddenLabel = shouldShowOverriddenLabel)
+        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
         content()
     }
 }
