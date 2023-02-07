@@ -27,8 +27,10 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalMinimumTouchTargetEnforcement
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -38,6 +40,7 @@ import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -289,6 +292,7 @@ fun EditableStringTweakEntryBody(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditableBooleanTweakEntryBody(
     entry: EditableBooleanTweakEntry,
@@ -308,14 +312,17 @@ fun EditableBooleanTweakEntryBody(
                 .makeText(context, "Current value is $value.", Toast.LENGTH_LONG)
                 .show()
         },
-        shouldShowOverriddenLabel = isOverridden) {
-        Checkbox(
-            checked = value ?: false,
-            onCheckedChange = {
-                tweakRowViewModel.setValue(entry, it)
-            },
-            colors = tweaksCheckboxColors(),
-        )
+        shouldShowOverriddenLabel = isOverridden
+    ) {
+        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+            Checkbox(
+                checked = value ?: false,
+                onCheckedChange = {
+                    tweakRowViewModel.setValue(entry, it)
+                },
+                colors = tweaksCheckboxColors(),
+            )
+        }
     }
 }
 
