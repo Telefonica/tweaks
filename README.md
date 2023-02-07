@@ -240,7 +240,19 @@ fun dropDownMenu(
 )
 ```
 A DropDownMenu
-Please review the app module for configuration examples. 
+Please review the app module for configuration examples.
+
+## Reset Button
+When a group of tweaks is created, only if there is at least one editable tweak, a reset button will be automatically added.
+If you do not want the reset button to be added automatically, there is a parameter in group node `hideResetButton` that can be set.
+```kotlin
+group(
+    title = "Group Title",
+    hideResetButton = true
+) {
+    // Your tweaks
+}
+```
 
 ## Custom screens:
 You can add your custom screens to the TweaksGraph by using the `customComposableScreens` parameter of `addTweakGraph` function, for example:
