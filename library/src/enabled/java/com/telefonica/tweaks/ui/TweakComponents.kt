@@ -304,7 +304,7 @@ fun EditableBooleanTweakEntryBody(
         tweakEntry = entry,
         onClick = {
             Toast
-                .makeText(context, "Current value is $entry.", Toast.LENGTH_LONG)
+                .makeText(context, "Current value is $value.", Toast.LENGTH_LONG)
                 .show()
         },
         shouldShowOverriddenLabel = isOverridden) {
