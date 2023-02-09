@@ -49,7 +49,7 @@ fun DefaultTweaksTheme(
         tweaksBackground = TweaksDarkBlue,
         tweaksOnBackground = Color.White,
         tweaksGroupBackground = TweaksDarkBlueBackground,
-        tweaksColorModified = TweaksDarkBlueBackground,
+        tweaksColorModified = TweaksGreen,
     )
     CompositionLocalProvider(LocalTweaksColors provides tweaksColors) {
         content()
