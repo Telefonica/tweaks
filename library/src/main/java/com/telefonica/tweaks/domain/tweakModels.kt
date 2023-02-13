@@ -16,7 +16,7 @@ data class TweaksGraph(val cover: TweakGroup?, val categories: List<TweakCategor
         private val categories = mutableListOf<TweakCategory>()
         private var cover: TweakGroup? = null
 
-        fun cover(title: String, withClearButton: Boolean = false, block: TweakGroup.Builder.() -> Unit) {
+        fun cover(title: String, withClearButton: Boolean = true, block: TweakGroup.Builder.() -> Unit) {
             val builder = TweakGroup.Builder(title, withClearButton)
             builder.block()
             cover = builder.build()

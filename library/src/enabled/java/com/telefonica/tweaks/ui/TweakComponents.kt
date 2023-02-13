@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,8 +27,10 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalMinimumTouchTargetEnforcement
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -37,6 +40,7 @@ import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,6 +61,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -185,7 +190,8 @@ fun TweakGroupBody(
                         onCustomNavigation)
                 }
             }
-            if (tweakGroup.withClearButton) {
+
+            if (tweakGroup.entries.any { it is Editable<*> } && tweakGroup.withClearButton) {
                 Divider(thickness = 2.dp)
                 ResetButton(onResetClicked = { tweakGroupViewModel.reset(tweakGroup) })
             }
@@ -259,7 +265,8 @@ fun ReadOnlyStringTweakEntryBody(
         Text(
             text = "$value",
             fontFamily = FontFamily.Monospace,
-            color = TweaksTheme.colors.tweaksOnBackground
+            color = TweaksTheme.colors.tweaksOnBackground,
+            textAlign = TextAlign.End,
         )
     }
 }
@@ -287,6 +294,7 @@ fun EditableStringTweakEntryBody(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditableBooleanTweakEntryBody(
     entry: EditableBooleanTweakEntry,
@@ -303,17 +311,20 @@ fun EditableBooleanTweakEntryBody(
         tweakEntry = entry,
         onClick = {
             Toast
-                .makeText(context, "Current value is $entry.", Toast.LENGTH_LONG)
+                .makeText(context, "Current value is $value.", Toast.LENGTH_LONG)
                 .show()
         },
-        shouldShowOverriddenLabel = isOverridden) {
-        Checkbox(
-            checked = value ?: false,
-            onCheckedChange = {
-                tweakRowViewModel.setValue(entry, it)
-            },
-            colors = tweaksCheckboxColors(),
-        )
+        shouldShowOverriddenLabel = isOverridden
+    ) {
+        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+            Checkbox(
+                checked = value ?: false,
+                onCheckedChange = {
+                    tweakRowViewModel.setValue(entry, it)
+                },
+                colors = tweaksCheckboxColors(),
+            )
+        }
     }
 }
 
@@ -436,7 +447,7 @@ private fun TweakRow(
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
@@ -447,6 +458,7 @@ private fun TweakRow(
             )
     ) {
         TweakNameText(entry = tweakEntry, shouldShowOverriddenLabel = shouldShowOverriddenLabel)
+        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
         content()
     }
 }
