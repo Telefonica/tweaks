@@ -191,7 +191,7 @@ fun TweakGroupBody(
                 }
             }
 
-            if (tweakGroup.entries.any { it is Editable<*> } && !tweakGroup.hideResetButton) {
+            if (tweakGroup.entries.any { it is Editable<*> } && tweakGroup.withClearButton) {
                 Divider(thickness = 2.dp)
                 ResetButton(onResetClicked = { tweakGroupViewModel.reset(tweakGroup) })
             }

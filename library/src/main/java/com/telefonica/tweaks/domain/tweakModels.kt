@@ -16,8 +16,8 @@ data class TweaksGraph(val cover: TweakGroup?, val categories: List<TweakCategor
         private val categories = mutableListOf<TweakCategory>()
         private var cover: TweakGroup? = null
 
-        fun cover(title: String, hideResetButton: Boolean = false, block: TweakGroup.Builder.() -> Unit) {
-            val builder = TweakGroup.Builder(title, hideResetButton)
+        fun cover(title: String, withClearButton: Boolean = true, block: TweakGroup.Builder.() -> Unit) {
+            val builder = TweakGroup.Builder(title, withClearButton)
             builder.block()
             cover = builder.build()
         }
@@ -41,10 +41,10 @@ data class TweakCategory(val title: String, val groups: List<TweakGroup>) {
 
         fun group(
             title: String,
-            hideResetButton: Boolean = false,
+            withClearButton: Boolean = true,
             block: TweakGroup.Builder.() -> Unit,
         ) {
-            val builder = TweakGroup.Builder(title, hideResetButton)
+            val builder = TweakGroup.Builder(title, withClearButton)
             builder.block()
             groups.add(builder.build())
         }
@@ -54,10 +54,10 @@ data class TweakCategory(val title: String, val groups: List<TweakGroup>) {
 }
 
 /** A bunch of tweaks that are related to each other, for example: domain & port for the backend server configurations*/
-data class TweakGroup(val title: String, val hideResetButton: Boolean = false, val entries: List<TweakEntry>) {
+data class TweakGroup(val title: String, val withClearButton: Boolean = true, val entries: List<TweakEntry>) {
     class Builder(
         private val title: String,
-        private val hideResetButton: Boolean = false,
+        private val withClearButton: Boolean = true,
     ) {
         private val entries = mutableListOf<TweakEntry>()
 
@@ -166,7 +166,7 @@ data class TweakGroup(val title: String, val hideResetButton: Boolean = false, v
             tweak(DropDownMenuTweakEntry(key, name, values, defaultValue))
         }
 
-        internal fun build(): TweakGroup = TweakGroup(title, hideResetButton, entries)
+        internal fun build(): TweakGroup = TweakGroup(title, withClearButton, entries)
     }
 }
 
