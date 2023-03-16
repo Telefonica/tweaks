@@ -29,4 +29,4 @@ jobs:
         env:
           MOBILE_MAVENCENTRAL_USER: ${{ secrets.MOBILE_MAVENCENTRAL_USER }}
           MOBILE_MAVENCENTRAL_PASSWORD: ${{ secrets.MOBILE_MAVENCENTRAL_PASSWORD }}
-        run: 'bash ./gradlew closeAndReleaseRepository'
+        run: 'bash ./gradlew closeAndReleaseSonatypeStagingRepository'
