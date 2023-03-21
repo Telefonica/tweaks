@@ -21,12 +21,8 @@ jobs:
           ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
         run: "bash ./gradlew publishReleasePublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }} publishNoopPublicationToSonatypeRepository -DLIBRARY_VERSION=${{ github.event.release.tag_name }}"
 
-      - name: Wait 1 minute until the artifacts are ready in maven central
-        run: sleep 60s
-        shell: bash
-
       - name: Close and promote staging repository
         env:
           MOBILE_MAVENCENTRAL_USER: ${{ secrets.MOBILE_MAVENCENTRAL_USER }}
           MOBILE_MAVENCENTRAL_PASSWORD: ${{ secrets.MOBILE_MAVENCENTRAL_PASSWORD }}
-        run: 'bash ./gradlew closeAndReleaseRepository'
+        run: 'bash ./gradlew closeAndReleaseStagingRepository'
