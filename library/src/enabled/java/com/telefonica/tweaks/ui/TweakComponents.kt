@@ -6,8 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +59,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -82,6 +83,7 @@ import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweakGroup
 import com.telefonica.tweaks.domain.TweaksGraph
 import kotlin.math.max
+
 
 @Composable
 fun TweaksScreen(
@@ -172,22 +174,36 @@ fun TweakGroupBody(
             Divider(thickness = 2.dp)
             tweakGroup.entries.iterator().forEach { entry ->
                 when (entry) {
-                    is EditableStringTweakEntry -> EditableStringTweakEntryBody(entry,
-                        EditableTweakEntryViewModel())
-                    is EditableBooleanTweakEntry -> EditableBooleanTweakEntryBody(entry,
-                        EditableTweakEntryViewModel())
-                    is EditableIntTweakEntry -> EditableIntTweakEntryBody(entry,
-                        EditableTweakEntryViewModel())
-                    is EditableLongTweakEntry -> EditableLongTweakEntryBody(entry,
-                        EditableTweakEntryViewModel())
-                    is DropDownMenuTweakEntry -> DropDownMenuTweakEntryBody(entry,
-                        EditableTweakEntryViewModel())
-                    is ReadOnlyStringTweakEntry -> ReadOnlyStringTweakEntryBody(entry,
-                        ReadOnlyTweakEntryViewModel())
+                    is EditableStringTweakEntry -> EditableStringTweakEntryBody(
+                        entry,
+                        EditableTweakEntryViewModel()
+                    )
+                    is EditableBooleanTweakEntry -> EditableBooleanTweakEntryBody(
+                        entry,
+                        EditableTweakEntryViewModel()
+                    )
+                    is EditableIntTweakEntry -> EditableIntTweakEntryBody(
+                        entry,
+                        EditableTweakEntryViewModel()
+                    )
+                    is EditableLongTweakEntry -> EditableLongTweakEntryBody(
+                        entry,
+                        EditableTweakEntryViewModel()
+                    )
+                    is DropDownMenuTweakEntry -> DropDownMenuTweakEntryBody(
+                        entry,
+                        EditableTweakEntryViewModel()
+                    )
+                    is ReadOnlyStringTweakEntry -> ReadOnlyStringTweakEntryBody(
+                        entry,
+                        ReadOnlyTweakEntryViewModel()
+                    )
                     is ButtonTweakEntry -> TweakButton(entry)
                     is RouteButtonTweakEntry -> TweakNavigableButton(entry, onNavigationEvent)
-                    is CustomNavigationButtonTweakEntry -> TweakNavigableButton(entry,
-                        onCustomNavigation)
+                    is CustomNavigationButtonTweakEntry -> TweakNavigableButton(
+                        entry,
+                        onCustomNavigation
+                    )
                 }
             }
 
@@ -444,11 +460,9 @@ private fun TweakRow(
     onClick: (() -> Unit),
     onLongClick: (() -> Unit)? = null,
     shouldShowOverriddenLabel: Boolean = false,
-    content: @Composable RowScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    Row(
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.SpaceBetween,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
@@ -538,14 +552,23 @@ private fun TweakNameText(
     entry: TweakEntry,
     shouldShowOverriddenLabel: Boolean = false,
 ) {
-    Row {
-        Text(text = entry.name,
-            style = MaterialTheme.typography.body1,
-            color = TweaksTheme.colors.tweaksOnBackground)
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = entry.name,
+            style = MaterialTheme.typography.h6,
+            color = TweaksTheme.colors.tweaksOnBackground,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(1f, false)
+        )
         if (shouldShowOverriddenLabel) {
-            Text("(Modified)",
+            Text(
+                " (Modified)",
                 style = MaterialTheme.typography.caption,
-                color = TweaksTheme.colors.tweaksColorModified)
+                color = TweaksTheme.colors.tweaksColorModified,
+            )
         }
     }
 }
