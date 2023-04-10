@@ -19,6 +19,7 @@ data class TweaksColors(
     val tweaksBackground: Color,
     val tweaksOnBackground: Color,
     val tweaksGroupBackground: Color,
+    val tweaksDropdownItemBackground: Color,
     val tweaksColorModified: Color,
 )
 
@@ -32,6 +33,7 @@ val LocalTweaksColors = staticCompositionLocalOf {
         tweaksBackground = Color.Unspecified,
         tweaksOnBackground = Color.Unspecified,
         tweaksGroupBackground = Color.Unspecified,
+        tweaksDropdownItemBackground = Color.Unspecified,
         tweaksColorModified = Color.Unspecified,
     )
 }
@@ -49,6 +51,7 @@ fun DefaultTweaksTheme(
         tweaksBackground = TweaksDarkBlue,
         tweaksOnBackground = Color.White,
         tweaksGroupBackground = TweaksDarkBlueBackground,
+        tweaksDropdownItemBackground = TweaksDarkBlue,
         tweaksColorModified = TweaksGreen,
     )
     CompositionLocalProvider(LocalTweaksColors provides tweaksColors) {
