@@ -43,7 +43,7 @@ class TweakDemoApplication : Application() {
                 }
                 editableString(
                     key = "value1",
-                    name = "Value 1",
+                    name = "RSSI value returned by the operating system",
                 )
                 editableBoolean(
                     key = "value2",
