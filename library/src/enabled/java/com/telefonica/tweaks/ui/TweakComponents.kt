@@ -420,9 +420,11 @@ fun DropDownMenuTweakEntryBody(
         onDismissRequest = { expanded = false },
         modifier = Modifier
             .fillMaxWidth()
+            .background(color = TweaksTheme.colors.tweaksDropdownItemBackground)
     ) {
         items.forEachIndexed { index, value ->
-            DropdownMenuItem(onClick = {
+            DropdownMenuItem(
+                onClick = {
                 selectedIndex = index
                 expanded = false
                 tweakRowViewModel.setValue(entry, items[selectedIndex])
