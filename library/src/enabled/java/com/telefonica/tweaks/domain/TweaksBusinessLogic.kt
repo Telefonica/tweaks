@@ -106,8 +106,8 @@ class TweaksBusinessLogic @Inject constructor(
         setValue(tweakEntry, value)
     }
 
-    suspend fun <T> clearValue(key: String) {
-        val tweakEntry = keyToEntryValueMap[key] as Editable<T>
+    suspend fun clearValue(key: String) {
+        val tweakEntry = keyToEntryValueMap[key] as Editable<*>
         clearValue(tweakEntry)
     }
 

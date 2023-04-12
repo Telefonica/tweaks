@@ -25,6 +25,10 @@ open class Tweaks {
         else -> flowOf()
     }
 
+    open suspend fun <T> setTweakValue(key: String, value: T) {}
+
+    open suspend fun clearValue(key: String) {}
+
     private fun initialize(tweaksGraph: TweaksGraph) {
         val allEntries: List<Editable<*>> = tweaksGraph.categories
             .flatMap { category ->

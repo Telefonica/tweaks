@@ -39,6 +39,14 @@ open class Tweaks {
 
     open fun <T> getTweakValue(key: String): Flow<T?> = tweaksBusinessLogic.getValue(key)
 
+    open suspend fun <T> setTweakValue(key: String, value: T) {
+        tweaksBusinessLogic.setValue(key, value)
+    }
+
+    open suspend fun clearValue(key: String) {
+        tweaksBusinessLogic.clearValue(key)
+    }
+
     private fun initializeGraph(tweaksGraph: TweaksGraph) {
         tweaksBusinessLogic.initialize(tweaksGraph)
     }
