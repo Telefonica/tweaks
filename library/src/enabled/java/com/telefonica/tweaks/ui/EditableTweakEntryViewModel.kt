@@ -1,5 +1,8 @@
 package com.telefonica.tweaks.ui
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.telefonica.tweaks.Tweaks
@@ -7,27 +10,36 @@ import com.telefonica.tweaks.domain.Editable
 import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweaksBusinessLogic
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class EditableTweakEntryViewModel<T>(
+    private val tweakEntry: Editable<T>,
     private val tweaksBusinessLogic: TweaksBusinessLogic = Tweaks.getReference().tweaksBusinessLogic
 ) : ViewModel() {
 
-    fun <T> getValue(entry: TweakEntry): Flow<T?> = tweaksBusinessLogic.getValue(entry)
-
-    fun <T> setValue(entry: Editable<T>, value: T) {
+    var value: T? by mutableStateOf(null)
+    val entry = (tweakEntry as TweakEntry)
+    init {
         viewModelScope.launch {
-            tweaksBusinessLogic.setValue(entry, value)
+            value = tweaksBusinessLogic.getValue<T>(tweakEntry as TweakEntry).first()
         }
     }
 
-    fun isOverridden(entry: Editable<T>): Flow<Boolean> =
-        tweaksBusinessLogic.isOverriddenOrDifferentFromDefaultValue(entry)
-
-
-    fun clearValue(entry: Editable<T>) {
+    fun updateValue(value: T) {
+        this.value = value
         viewModelScope.launch {
-            tweaksBusinessLogic.clearValue(entry)
+            tweaksBusinessLogic.setValue(tweakEntry, value)
+        }
+    }
+
+    fun isOverridden(): Flow<Boolean> =
+        tweaksBusinessLogic.isOverriddenOrDifferentFromDefaultValue(tweakEntry)
+
+    fun clearValue() {
+        viewModelScope.launch {
+            tweaksBusinessLogic.clearValue(tweakEntry)
         }
     }
 }
