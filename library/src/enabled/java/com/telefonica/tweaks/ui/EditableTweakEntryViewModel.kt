@@ -38,6 +38,7 @@ class EditableTweakEntryViewModel<T>(
         tweaksBusinessLogic.isOverriddenOrDifferentFromDefaultValue(tweakEntry)
 
     fun clearValue() {
+        this.value = null
         viewModelScope.launch {
             tweaksBusinessLogic.clearValue(tweakEntry)
         }
