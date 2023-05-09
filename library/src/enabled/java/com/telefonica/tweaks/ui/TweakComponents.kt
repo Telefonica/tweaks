@@ -580,17 +580,6 @@ private fun tweaksTextFieldColors(): TextFieldColors =
         disabledLabelColor = TweaksTheme.colors.tweaksPrimary,
     )
 
-@Preview
-@Composable
-fun StringTweakEntryPreview() {
-//    EditableStringTweakEntryBody(
-//        EditableStringTweakEntry(
-//            key = "key",
-//            name = "Example",
-//        )
-//    )
-}
-
 @Composable
 internal fun TweakButton(
     onClick: () -> Unit,
