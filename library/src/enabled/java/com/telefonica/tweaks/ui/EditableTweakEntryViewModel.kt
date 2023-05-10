@@ -34,7 +34,7 @@ class EditableTweakEntryViewModel<T>(
     }
 
     fun isOverridden(): Flow<Boolean> =
-        tweaksBusinessLogic.isOverriddenOrDifferentFromDefaultValue(tweakEntry)
+        tweaksBusinessLogic.isOverridden(tweakEntry)
 
     fun clearValue() {
         this.value = null
