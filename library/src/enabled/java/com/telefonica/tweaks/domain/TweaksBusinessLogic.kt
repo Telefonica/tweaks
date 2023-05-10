@@ -2,7 +2,6 @@ package com.telefonica.tweaks.domain
 
 import com.telefonica.tweaks.data.TweaksRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
@@ -65,7 +64,7 @@ class TweaksBusinessLogic @Inject constructor(
     private fun <T> getMutableValue(entry: Editable<T>): Flow<T?> {
         val defaultValue: Flow<T> = entry.defaultValue ?: flowOf()
 
-        return isOverriden(entry)
+        return isOverridden(entry)
             .flatMapMerge { overriden ->
                 when (overriden) {
                     true -> getFromStorage(entry)
@@ -74,22 +73,8 @@ class TweaksBusinessLogic @Inject constructor(
             }
     }
 
-    private fun isOverriden(entry: Editable<*>): Flow<Boolean> =
+    fun isOverridden(entry: Editable<*>): Flow<Boolean> =
         tweaksRepository.isOverriden(entry).map { it ?: OVERRIDEN_DEFAULT_VALUE }
-
-    fun <T> isOverriddenOrDifferentFromDefaultValue(entry: Editable<T>): Flow<Boolean> {
-        val valueFlow = getValue<T>(entry.key)
-        return if (entry.defaultValue == null) {
-            isOverriden(entry)
-        } else {
-            valueFlow
-                .combine(entry.defaultValue!!) { currentValue, defaultValue ->
-                    currentValue == defaultValue
-                }.combine(isOverriden(entry)) { areEquals, isOverriden ->
-                    isOverriden && !areEquals
-                }
-        }
-    }
 
     private fun <T> getFromStorage(entry: Editable<T>) = tweaksRepository.get(entry)
 
