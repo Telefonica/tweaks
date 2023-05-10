@@ -22,7 +22,9 @@ class EditableTweakEntryViewModel<T>(
     val entry = (tweakEntry as TweakEntry)
     init {
         viewModelScope.launch {
-            value = tweaksBusinessLogic.getValue<T>(tweakEntry as TweakEntry).first()
+            tweaksBusinessLogic.getValue<T>(tweakEntry as TweakEntry).collect {
+                value = it
+            }
         }
     }
 
