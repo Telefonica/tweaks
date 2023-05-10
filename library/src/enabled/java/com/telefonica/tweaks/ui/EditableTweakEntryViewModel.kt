@@ -10,7 +10,6 @@ import com.telefonica.tweaks.domain.Editable
 import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweaksBusinessLogic
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class EditableTweakEntryViewModel<T>(
@@ -22,7 +21,9 @@ class EditableTweakEntryViewModel<T>(
     val entry = (tweakEntry as TweakEntry)
     init {
         viewModelScope.launch {
-            value = tweaksBusinessLogic.getValue<T>(tweakEntry as TweakEntry).first()
+            tweaksBusinessLogic.getValue<T>(tweakEntry as TweakEntry).collect {
+                value = it
+            }
         }
     }
 
