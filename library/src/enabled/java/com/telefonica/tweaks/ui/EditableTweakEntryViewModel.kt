@@ -10,7 +10,6 @@ import com.telefonica.tweaks.domain.Editable
 import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweaksBusinessLogic
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class EditableTweakEntryViewModel<T>(
