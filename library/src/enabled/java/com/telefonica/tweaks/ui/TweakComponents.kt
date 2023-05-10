@@ -62,7 +62,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -81,7 +80,7 @@ import com.telefonica.tweaks.domain.TweakCategory
 import com.telefonica.tweaks.domain.TweakEntry
 import com.telefonica.tweaks.domain.TweakGroup
 import com.telefonica.tweaks.domain.TweaksGraph
-import java.lang.Integer.max
+import kotlin.math.max
 
 
 @Composable

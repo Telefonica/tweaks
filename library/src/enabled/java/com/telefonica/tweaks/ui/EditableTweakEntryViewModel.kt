@@ -12,7 +12,6 @@ import com.telefonica.tweaks.domain.TweaksBusinessLogic
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class EditableTweakEntryViewModel<T>(
     private val tweakEntry: Editable<T>,
