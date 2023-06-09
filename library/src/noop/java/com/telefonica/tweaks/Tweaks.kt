@@ -1,6 +1,6 @@
 package com.telefonica.tweaks
 
-import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
