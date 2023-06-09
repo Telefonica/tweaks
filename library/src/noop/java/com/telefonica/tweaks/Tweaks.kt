@@ -1,6 +1,6 @@
 package com.telefonica.tweaks
 
-import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -47,7 +47,7 @@ open class Tweaks {
 
         @JvmStatic
         fun init(
-            application: Application,
+            context: Context,
             tweaksGraph: TweaksGraph,
         ) {
             reference.initialize(tweaksGraph)
