@@ -47,7 +47,7 @@ open class Tweaks {
 
         @JvmStatic
         fun init(
-            application: Application,
+            context: Context,
             tweaksGraph: TweaksGraph,
         ) {
             reference.initialize(tweaksGraph)
