@@ -6,6 +6,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Tweaks"
+rootProject.name = "tweaks"
 include ':app'
 include ':library'
