@@ -29,6 +29,8 @@ import com.telefonica.tweaks.domain.TweaksGraph
 import com.telefonica.tweaks.ui.TweaksCategoryScreen
 import com.telefonica.tweaks.ui.TweaksScreen
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
@@ -38,6 +40,12 @@ open class Tweaks {
     internal lateinit var tweaksBusinessLogic: TweaksBusinessLogic
 
     open fun <T> getTweakValue(key: String): Flow<T?> = tweaksBusinessLogic.getValue(key)
+
+    open fun <T> getTweakValue(key: String, defaultValue: T): Flow<T> = getTweakValue<T>(key).map { it ?: defaultValue }
+
+    open suspend fun <T> getTweak(key: String): T? = getTweakValue<T>(key).firstOrNull()
+
+    open suspend fun <T> getTweak(key: String, defaultValue: T): T = getTweak(key) ?: defaultValue
 
     open suspend fun <T> setTweakValue(key: String, value: T) {
         tweaksBusinessLogic.setValue(key, value)
