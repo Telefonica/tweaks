@@ -18,6 +18,15 @@ open class Tweaks {
         return getTweakValue(entry)
     }
 
+    open fun <T> getTweakValue(key: String, defaultValue: T): Flow<T> =
+        flowOf(defaultValue)
+
+    open suspend fun <T> getTweak(key: String): T? =
+        null
+
+    open suspend fun <T> getTweak(key: String, defaultValue: T): T =
+        defaultValue
+
     @Suppress("UNCHECKED_CAST")
     private fun <T> getTweakValue(entry: TweakEntry): Flow<T?> = when (entry) {
         is ReadOnly<*> -> (entry as ReadOnly<T>).value
