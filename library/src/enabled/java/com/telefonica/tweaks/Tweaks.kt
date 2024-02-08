@@ -34,24 +34,24 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
-open class Tweaks {
+open class Tweaks: TweaksContract {
 
     @Inject
     internal lateinit var tweaksBusinessLogic: TweaksBusinessLogic
 
-    open fun <T> getTweakValue(key: String): Flow<T?> = tweaksBusinessLogic.getValue(key)
+    override fun <T> getTweakValue(key: String): Flow<T?> = tweaksBusinessLogic.getValue(key)
 
-    open fun <T> getTweakValue(key: String, defaultValue: T): Flow<T> = getTweakValue<T>(key).map { it ?: defaultValue }
+    override fun <T> getTweakValue(key: String, defaultValue: T): Flow<T> = getTweakValue<T>(key).map { it ?: defaultValue }
 
-    open suspend fun <T> getTweak(key: String): T? = getTweakValue<T>(key).firstOrNull()
+    override suspend fun <T> getTweak(key: String): T? = getTweakValue<T>(key).firstOrNull()
 
-    open suspend fun <T> getTweak(key: String, defaultValue: T): T = getTweak(key) ?: defaultValue
+    override suspend fun <T> getTweak(key: String, defaultValue: T): T = getTweak(key) ?: defaultValue
 
-    open suspend fun <T> setTweakValue(key: String, value: T) {
+    override suspend fun <T> setTweakValue(key: String, value: T) {
         tweaksBusinessLogic.setValue(key, value)
     }
 
-    open suspend fun clearValue(key: String) {
+    override suspend fun clearValue(key: String) {
         tweaksBusinessLogic.clearValue(key)
     }
 
