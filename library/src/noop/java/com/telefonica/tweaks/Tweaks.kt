@@ -6,17 +6,28 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import com.telefonica.tweaks.domain.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
-open class Tweaks {
+open class Tweaks : TweaksContract {
 
     private val keyToEntryValueMap: MutableMap<String, Editable<*>> = mutableMapOf()
 
     @Suppress("UNCHECKED_CAST")
-    open fun <T> getTweakValue(key: String): Flow<T?> {
+    override fun <T> getTweakValue(key: String): Flow<T?> {
         val entry= keyToEntryValueMap[key] as TweakEntry
         return getTweakValue(entry)
     }
+
+    override fun <T> getTweakValue(key: String, defaultValue: T): Flow<T> =
+        getTweakValue<T>(key).map { it ?: defaultValue }
+
+    override suspend fun <T> getTweak(key: String): T? =
+        getTweakValue<T>(key).firstOrNull()
+
+    override suspend fun <T> getTweak(key: String, defaultValue: T): T =
+        getTweak(key) ?: defaultValue
 
     @Suppress("UNCHECKED_CAST")
     private fun <T> getTweakValue(entry: TweakEntry): Flow<T?> = when (entry) {
@@ -25,9 +36,9 @@ open class Tweaks {
         else -> flowOf()
     }
 
-    open suspend fun <T> setTweakValue(key: String, value: T) {}
+    override suspend fun <T> setTweakValue(key: String, value: T) {}
 
-    open suspend fun clearValue(key: String) {}
+    override suspend fun clearValue(key: String) {}
 
     private fun initialize(tweaksGraph: TweaksGraph) {
         val allEntries: List<Editable<*>> = tweaksGraph.categories
