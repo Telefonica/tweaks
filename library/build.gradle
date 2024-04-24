@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'com.google.devtools.ksp'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -69,8 +69,8 @@ dependencies {
 
     //Dagger
     enabledImplementation "com.google.dagger:dagger-android-support:$dagger_version"
-    ksp "com.google.dagger:dagger-compiler:$dagger_version"
-    ksp "com.google.dagger:dagger-android-processor:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 
 
     testImplementation 'junit:junit:4.13.2'
