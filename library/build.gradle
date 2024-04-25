@@ -5,11 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    namespace "com.telefonica.tweaks"
+    compileSdk 34
 
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -21,11 +22,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
     buildFeatures {
         compose true
@@ -52,17 +53,19 @@ android {
 
 dependencies {
 
-    enabledImplementation 'androidx.core:core-ktx:1.9.0'
-    enabledImplementation 'androidx.appcompat:appcompat:1.5.1'
-    enabledImplementation 'com.google.android.material:material:1.7.0'
-    enabledImplementation "androidx.compose.material:material:$compose_material_version"
-    enabledImplementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    enabledImplementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-    enabledImplementation 'androidx.activity:activity-compose:1.6.1'
+    enabledImplementation 'androidx.core:core-ktx:1.13.0'
+    enabledImplementation 'androidx.appcompat:appcompat:1.6.1'
+    enabledImplementation 'com.google.android.material:material:1.11.0'
+
+    enabledImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
+    enabledImplementation "androidx.compose.material:material"
+    enabledImplementation "androidx.compose.ui:ui-tooling-preview"
+    enabledImplementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    enabledImplementation 'androidx.activity:activity-compose:1.9.0'
     enabledImplementation 'com.squareup:seismic:1.0.3'
-    enabledImplementation "androidx.datastore:datastore-preferences:1.0.0"
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.navigation:navigation-compose:2.6.0"
+    enabledImplementation "androidx.datastore:datastore-preferences:1.1.0"
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.navigation:navigation-compose:2.7.7"
 
     //Dagger
     enabledImplementation "com.google.dagger:dagger-android-support:$dagger_version"
@@ -71,12 +74,13 @@ dependencies {
 
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation "org.mockito.kotlin:mockito-kotlin:4.0.0"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.2.1"
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    androidTestImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
+    debugImplementation "androidx.compose.ui:ui-tooling"
 }
 
 apply from: "${rootProject.projectDir}/mavencentral.gradle"
