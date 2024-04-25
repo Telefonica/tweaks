@@ -57,14 +57,14 @@ dependencies {
     enabledImplementation 'androidx.appcompat:appcompat:1.6.1'
     enabledImplementation 'com.google.android.material:material:1.11.0'
 
-    enabledImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
-    enabledImplementation "androidx.compose.material:material"
-    enabledImplementation "androidx.compose.ui:ui-tooling-preview"
+    //noinspection BomWithoutPlatform
+    enabledImplementation "androidx.compose.material:material:$compose_version"
+    enabledImplementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     enabledImplementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
     enabledImplementation 'androidx.activity:activity-compose:1.9.0'
     enabledImplementation 'com.squareup:seismic:1.0.3'
     enabledImplementation "androidx.datastore:datastore-preferences:1.1.0"
-    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.navigation:navigation-compose:2.7.7"
 
     //Dagger
@@ -76,11 +76,11 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.mockito.kotlin:mockito-kotlin:5.2.1"
 
-    androidTestImplementation platform("androidx.compose:compose-bom:$compose_bom_version")
+    //noinspection BomWithoutPlatform
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
-    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 }
 
 apply from: "${rootProject.projectDir}/mavencentral.gradle"
