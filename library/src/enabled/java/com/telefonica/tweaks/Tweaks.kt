@@ -5,14 +5,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
-import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -29,7 +31,6 @@ import com.telefonica.tweaks.domain.TweaksBusinessLogic
 import com.telefonica.tweaks.domain.TweaksGraph
 import com.telefonica.tweaks.ui.TweaksCategoryScreen
 import com.telefonica.tweaks.ui.TweaksScreen
-import com.telefonica.tweaks.utils.onStart
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -96,17 +97,22 @@ open class Tweaks : TweaksContract {
 @Composable
 fun NavController.navigateToTweaksOnShake() {
     val context = LocalContext.current
-    val lifeCycleOwner = LocalLifecycleOwner.current
     val sensorManager: SensorManager =
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-    DisposableEffect(true) {
-        this.onStart(lifeCycleOwner) {
-            val shakeDetector = ShakeDetector {
-                vibrateIfAble(context)
-                navigate(TWEAKS_NAVIGATION_ENTRYPOINT)
-            }
-            shakeDetector.start(sensorManager, SENSOR_DELAY_NORMAL)
+    var shouldNavigate by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(true) {
+        val shakeDetector = ShakeDetector {
+            vibrateIfAble(context)
+            shouldNavigate = true
+        }
+        shakeDetector.start(sensorManager, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    if (shouldNavigate) {
+        LaunchedEffect(shouldNavigate) {
+            navigate(TWEAKS_NAVIGATION_ENTRYPOINT)
         }
     }
 }
