@@ -90,12 +90,24 @@ open class Tweaks : TweaksContract {
             component.inject(reference)
         }
     }
-
-
 }
 
 @Composable
 fun NavController.navigateToTweaksOnShake() {
+    DetectShakeAndNavigate {
+        navigate(TWEAKS_NAVIGATION_ENTRYPOINT)
+    }
+}
+
+@Composable
+fun NavigateToTweaksOnShake(onOpenTweaks: () -> Unit) {
+    DetectShakeAndNavigate {
+        onOpenTweaks()
+    }
+}
+
+@Composable
+private fun DetectShakeAndNavigate(onShakeDetected: () -> Unit) {
     val context = LocalContext.current
     val sensorManager: SensorManager =
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -110,12 +122,14 @@ fun NavController.navigateToTweaksOnShake() {
         shakeDetector.start(sensorManager, SensorManager.SENSOR_DELAY_NORMAL)
     }
 
-    if (shouldNavigate) {
-        LaunchedEffect(shouldNavigate) {
-            navigate(TWEAKS_NAVIGATION_ENTRYPOINT)
+    LaunchedEffect(shouldNavigate) {
+        if (shouldNavigate) {
+            onShakeDetected()
+            shouldNavigate = false
         }
     }
 }
+
 
 @SuppressLint("MissingPermission")
 private fun vibrateIfAble(context: Context) {

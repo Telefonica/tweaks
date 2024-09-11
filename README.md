@@ -275,10 +275,17 @@ addTweakGraph(
 ```
 
 ## Shake gesture support:
-The tweaks can be opened when the user shakes the device, to do this you need to add to your navigation controller:
+
+The tweaks can be opened when the user shakes the device. To achieve this, you can either add the following to your navigation controller:
 ```kotlin
 navController.navigateToTweaksOnShake()
 ```
+or call:
+```kotlin
+NavigateToTweaksOnShake(onOpenTweaks: () -> Unit)
+```
+and handle the navigation action yourself.
+
 And also, optionally
 ```xml
 <uses-permission android:name="android.permission.VIBRATE" />
