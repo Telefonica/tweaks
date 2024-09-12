@@ -5,12 +5,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.hardware.SensorManager
-import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -87,23 +90,46 @@ open class Tweaks : TweaksContract {
             component.inject(reference)
         }
     }
-
-
 }
 
 @Composable
 fun NavController.navigateToTweaksOnShake() {
+    DetectShakeAndNavigate {
+        navigate(TWEAKS_NAVIGATION_ENTRYPOINT)
+    }
+}
+
+@Composable
+fun NavigateToTweaksOnShake(onOpenTweaks: () -> Unit) {
+    DetectShakeAndNavigate {
+        onOpenTweaks()
+    }
+}
+
+@Composable
+private fun DetectShakeAndNavigate(onShakeDetected: () -> Unit) {
     val context = LocalContext.current
     val sensorManager: SensorManager =
         context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    var shouldNavigate by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(true) {
         val shakeDetector = ShakeDetector {
             vibrateIfAble(context)
-            navigate(TWEAKS_NAVIGATION_ENTRYPOINT)
+            shouldNavigate = true
         }
-        shakeDetector.start(sensorManager, SENSOR_DELAY_NORMAL)
+        shakeDetector.start(sensorManager, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    LaunchedEffect(shouldNavigate) {
+        if (shouldNavigate) {
+            onShakeDetected()
+            shouldNavigate = false
+        }
     }
 }
+
 
 @SuppressLint("MissingPermission")
 private fun vibrateIfAble(context: Context) {
