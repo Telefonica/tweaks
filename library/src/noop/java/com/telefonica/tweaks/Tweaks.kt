@@ -79,3 +79,6 @@ fun NavGraphBuilder.addTweakGraph(
 
 @Composable
 fun NavController.navigateToTweaksOnShake() {}
+
+@Composable
+fun NavigateToTweaksOnShake(onOpenTweaks: () -> Unit) {}
