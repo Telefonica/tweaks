@@ -95,7 +95,9 @@ open class Tweaks : TweaksContract {
 @Composable
 fun NavController.navigateToTweaksOnShake() {
     DetectShakeAndNavigate {
-        navigate(TWEAKS_NAVIGATION_ENTRYPOINT)
+        navigate(TWEAKS_NAVIGATION_ENTRYPOINT) {
+            launchSingleTop = true
+        }
     }
 }
 
