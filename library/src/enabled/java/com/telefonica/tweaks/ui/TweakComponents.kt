@@ -98,7 +98,7 @@ fun TweaksScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(TweaksTheme.colors.tweaksBackground)
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,7 +118,6 @@ fun TweaksScreen(
                 text = category.title,
             )
         }
-
         Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
     }
 }
@@ -134,7 +133,7 @@ fun TweaksCategoryScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(TweaksTheme.colors.tweaksBackground)
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -142,7 +141,6 @@ fun TweaksCategoryScreen(
         Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
         Text(
-            modifier = Modifier.padding(top = 16.dp),
             text = tweakCategory.title,
             style = MaterialTheme.typography.headlineLarge,
             color = TweaksTheme.colors.tweaksOnBackground,
@@ -167,10 +165,7 @@ fun TweakGroupBody(
     onNavigationEvent: (String) -> Unit,
     onCustomNavigation: ((NavController) -> Unit) -> Unit,
 ) {
-    Card(
-        modifier = Modifier.padding(vertical = 16.dp),
-        elevation = cardElevation(3.dp),
-    ) {
+    Card(elevation = cardElevation(3.dp)) {
         Column(
             modifier = Modifier
                 .background(TweaksTheme.colors.tweaksGroupBackground)
