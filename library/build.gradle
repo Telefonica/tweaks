@@ -57,7 +57,7 @@ dependencies {
     enabledImplementation 'androidx.appcompat:appcompat:1.6.1'
     enabledImplementation 'com.google.android.material:material:1.11.0'
 
-    enabledImplementation "androidx.compose.material:material:$compose_version"
+    enabledImplementation "androidx.compose.material3:material3:$compose_material3_version"
     enabledImplementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     enabledImplementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
     enabledImplementation 'androidx.activity:activity-compose:1.9.0'

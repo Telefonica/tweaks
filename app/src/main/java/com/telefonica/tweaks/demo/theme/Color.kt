@@ -1,11 +1,11 @@
 package com.telefonica.tweaks.demo.theme
 
-import androidx.compose.material.darkColors
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.darkColorScheme
 
-val TweaksColorPalette = darkColors(
+val TweaksColorPalette = darkColorScheme(
     primary = Color.Blue,
-    primaryVariant = Color.Blue,
+    inversePrimary = Color.Blue,
     surface = Color.Black,
     onSurface = Color.Black,
     background = Color.Black,

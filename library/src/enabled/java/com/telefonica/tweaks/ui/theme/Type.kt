@@ -1,6 +1,6 @@
 package com.telefonica.tweaks.ui.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -21,70 +21,80 @@ private val RobotoCondensed = FontFamily(
 )
 
 val TweaksTypography = Typography(
-    defaultFontFamily = RobotoCondensed,
-    h1 = TextStyle(
+    displayLarge = TextStyle(
         fontWeight = FontWeight.W100,
         fontSize = 96.sp,
+        fontFamily = RobotoCondensed
     ),
-    h2 = TextStyle(
+    displayMedium = TextStyle(
         fontWeight = FontWeight.SemiBold,
         fontSize = 44.sp,
         fontFamily = EczarFontFamily,
         letterSpacing = 1.5.sp
     ),
-    h3 = TextStyle(
+    displaySmall = TextStyle(
         fontWeight = FontWeight.W400,
-        fontSize = 14.sp
+        fontSize = 14.sp,
+        fontFamily = RobotoCondensed
     ),
-    h4 = TextStyle(
+    headlineLarge = TextStyle(
         fontWeight = FontWeight.W700,
-        fontSize = 34.sp
+        fontSize = 34.sp,
+        fontFamily = RobotoCondensed
     ),
-    h5 = TextStyle(
+    headlineMedium = TextStyle(
         fontWeight = FontWeight.W700,
-        fontSize = 24.sp
+        fontSize = 24.sp,
+        fontFamily = RobotoCondensed
     ),
-    h6 = TextStyle(
+    headlineSmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         lineHeight = 20.sp,
         fontFamily = EczarFontFamily,
         letterSpacing = 3.sp
     ),
-    subtitle1 = TextStyle(
+    titleLarge = TextStyle(
         fontWeight = FontWeight.Light,
         fontSize = 14.sp,
         lineHeight = 20.sp,
-        letterSpacing = 3.sp
+        letterSpacing = 3.sp,
+        fontFamily = RobotoCondensed
     ),
-    subtitle2 = TextStyle(
+    titleMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        letterSpacing = 0.1.em
+        letterSpacing = 0.1.em,
+        fontFamily = RobotoCondensed
     ),
-    body1 = TextStyle(
+    bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        letterSpacing = 0.1.em
+        letterSpacing = 0.1.em,
+        fontFamily = RobotoCondensed
     ),
-    body2 = TextStyle(
+    bodyMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 20.sp,
-        letterSpacing = 0.1.em
+        letterSpacing = 0.1.em,
+        fontFamily = RobotoCondensed
     ),
-    button = TextStyle(
+    labelLarge = TextStyle(
         fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.2.em
+        letterSpacing = 0.2.em,
+        fontFamily = RobotoCondensed
     ),
-    caption = TextStyle(
+    labelMedium = TextStyle(
         fontWeight = FontWeight.W500,
-        fontSize = 12.sp
+        fontSize = 12.sp,
+        fontFamily = RobotoCondensed
     ),
-    overline = TextStyle(
+    labelSmall = TextStyle(
         fontWeight = FontWeight.W500,
-        fontSize = 10.sp
+        fontSize = 10.sp,
+        fontFamily = RobotoCondensed
     )
 )
