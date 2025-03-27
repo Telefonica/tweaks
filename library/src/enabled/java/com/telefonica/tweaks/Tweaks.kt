@@ -121,7 +121,7 @@ private fun DetectShakeAndNavigate(onShakeDetected: () -> Unit) {
             vibrateIfAble(context)
             shouldNavigate = true
         }
-        shakeDetector.start(sensorManager, SensorManager.SENSOR_DELAY_NORMAL)
+        shakeDetector.start(sensorManager, SensorManager.SENSOR_DELAY_UI)
     }
 
     LaunchedEffect(shouldNavigate) {

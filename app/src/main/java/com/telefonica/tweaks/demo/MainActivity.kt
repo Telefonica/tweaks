@@ -5,21 +5,25 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.telefonica.tweaks.Tweaks.Companion.TWEAKS_NAVIGATION_ENTRYPOINT
 import com.telefonica.tweaks.addTweakGraph
 import com.telefonica.tweaks.demo.theme.DebugTweaksTheme
 import com.telefonica.tweaks.navigateToTweaksOnShake
@@ -41,7 +45,7 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     DemoNavHost(
                         navController = navController,
-                        initialScreen = "tweaks",
+                        initialScreen = "main-screen",
                     )
                 }
             }
@@ -59,6 +63,27 @@ class MainActivity : ComponentActivity() {
             startDestination = initialScreen,
             modifier = modifier,
         ) {
+            composable(
+                route = "main-screen",
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Button(
+                        onClick = { navController.navigate(TWEAKS_NAVIGATION_ENTRYPOINT) }
+                    ) {
+                        Text(
+                            text = "Tweaks",
+                            color = Color.White
+                        )
+                    }
+                }
+            }
             addTweakGraph(
                 navController = navController,
             ) {
