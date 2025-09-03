@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace "com.telefonica.tweaks.demo"
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.telefonica.tweaks.demo"
         minSdk 21
-        targetSdk 34
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 
