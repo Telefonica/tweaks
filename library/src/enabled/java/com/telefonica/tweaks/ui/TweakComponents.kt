@@ -1,5 +1,6 @@
 package com.telefonica.tweaks.ui
 
+import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -10,13 +11,20 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemGestures
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -57,6 +65,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -99,11 +108,12 @@ fun TweaksScreen(
             .fillMaxSize()
             .background(TweaksTheme.colors.tweaksBackground)
             .padding(horizontal = 16.dp)
+            .edgeToEdgeInsetsForOrientation()
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+//        Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
         tweaksGraph.cover?.let {
             TweakGroupBody(
@@ -118,7 +128,7 @@ fun TweaksScreen(
                 text = category.title,
             )
         }
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
+//        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
     }
 }
 
@@ -134,6 +144,7 @@ fun TweaksCategoryScreen(
             .fillMaxSize()
             .background(TweaksTheme.colors.tweaksBackground)
             .padding(horizontal = 16.dp)
+            .edgeToEdgeInsetsForOrientation()
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -600,4 +611,27 @@ internal fun TweakButton(
             color = TweaksTheme.colors.tweaksOnPrimary,
         )
     }
+}
+
+@Composable
+fun Modifier.edgeToEdgeInsetsForOrientation(includeIme: Boolean = true): Modifier {
+    val isLandscape =
+        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    val sides =
+        if (isLandscape) WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+        else WindowInsetsSides.Top + WindowInsetsSides.Bottom
+
+    var base = WindowInsets.statusBars
+        .union(WindowInsets.navigationBars)
+        .union(WindowInsets.displayCutout)
+        .union(WindowInsets.systemGestures)
+        .only(sides)
+
+    if (includeIme && !isLandscape) {
+        // In portrait mode: is add the IME space
+        base = base.union(WindowInsets.ime.only(WindowInsetsSides.Bottom))
+    }
+
+    return this.windowInsetsPadding(base)
 }
