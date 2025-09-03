@@ -113,8 +113,6 @@ fun TweaksScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-//        Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
-
         tweaksGraph.cover?.let {
             TweakGroupBody(
                 tweakGroup = it,
@@ -128,7 +126,6 @@ fun TweaksScreen(
                 text = category.title,
             )
         }
-//        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
     }
 }
 
@@ -614,7 +611,7 @@ internal fun TweakButton(
 }
 
 @Composable
-fun Modifier.edgeToEdgeInsetsForOrientation(includeIme: Boolean = true): Modifier {
+fun Modifier.edgeToEdgeInsetsForOrientation(): Modifier {
     val isLandscape =
         LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -627,11 +624,6 @@ fun Modifier.edgeToEdgeInsetsForOrientation(includeIme: Boolean = true): Modifie
         .union(WindowInsets.displayCutout)
         .union(WindowInsets.systemGestures)
         .only(sides)
-
-    if (includeIme && !isLandscape) {
-        // In portrait mode: is add the IME space
-        base = base.union(WindowInsets.ime.only(WindowInsetsSides.Bottom))
-    }
 
     return this.windowInsetsPadding(base)
 }
